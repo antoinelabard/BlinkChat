@@ -1,34 +1,152 @@
 import "./App.css";
-// import Repository from "./data/Repository.js";
 import { socket } from "./socket";
 import React, { useState, useEffect } from "react";
+import { PiPlugsBold } from "react-icons/pi";
+import { PiPlugsConnectedBold } from "react-icons/pi";
+import { IoIosSend } from "react-icons/io";
+import { IoMdAddCircleOutline } from "react-icons/io";
+import {
+  Input,
+  InputRightElement,
+  InputGroup,
+  Button,
+  Box,
+  Text,
+  Stack,
+  Card,
+  CardBody,
+  CardHeader,
+  Heading,
+  StackDivider,
+} from "@chakra-ui/react";
 
-function ChannelList({ salons, changeRoom, deleteRoom }) {
-  return salons.map((salon) => (
-    <div>
-      <button key={salon} onClick={() => changeRoom(salon)}>
-        {salon}
-      </button>
-      <button onClick={() => deleteRoom(salon)}>x</button>
-    </div>
-  ));
+function ChannelList({ rooms, changeRoom, deleteRoom }) {
+  return rooms ? (
+    <Stack style={{ display: "flex", flexWrap: "wrap" }}>
+      {rooms.map((room) => (
+        <Box key={room}>
+          <Button
+            size={"xs"}
+            colorScheme={"red"}
+            onClick={() => deleteRoom(room)}
+          >
+            x
+          </Button>
+          <Button
+            size={"xs"}
+            colorScheme={"teal"}
+            key={room}
+            onClick={() => changeRoom(room)}
+          >
+            {room}
+          </Button>
+        </Box>
+      ))}
+    </Stack>
+  ) : (
+    <p>There are no rooms yet</p>
+  );
+}
+function NewChannelForm({ createRoom }) {
+  return (
+    <form
+      id="create-channel-input"
+      onSubmit={(e) => {
+        e.preventDefault();
+        createRoom(e.target[0].value);
+      }}
+    >
+      <InputGroup>
+        <Input type="text" placeholder="Create a channel" />
+        <InputRightElement width="4.5rem">
+          <button type="submit">
+            <IoMdAddCircleOutline />
+          </button>
+        </InputRightElement>
+      </InputGroup>
+    </form>
+  );
 }
 
-function Message({ message }) {
+function Conversation({
+  messages,
+  deleteMessage,
+  publishMessage,
+  room,
+  children,
+}) {
   return (
-    <li>
-      <h1>{message.message} </h1>
-      <h2>{message.author}</h2>
-      <h3>{message.date}</h3>
-      <button>Delete message</button>
-    </li>
+    <Card>
+      <CardHeader>
+        <Heading size="md">{room}</Heading>
+      </CardHeader>
+
+      <CardBody>
+        <Stack divider={<StackDivider />} spacing="4" flexWrap={"wrap"}>
+          {messages.map((message, key) => (
+            <Box key={key} display={"flex"} justifyContent={"space-between"}>
+              <div>
+                <Heading size="xs" textTransform="uppercase">
+                  {message.author}
+                </Heading>
+                <Text fontSize={"xs"}>{message.date}</Text>
+              </div>
+              <Text pt="2" fontSize="sm">
+                {message.name}
+              </Text>
+              <Button
+                size={"xs"}
+                colorScheme={"red"}
+                onClick={() => deleteMessage(message)}
+              >
+                X
+              </Button>
+            </Box>
+          ))}
+          <Box>{children}</Box>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              publishMessage(e.target[0].value);
+            }}
+          >
+            <InputGroup>
+              <Input type="text" placeholder="Send a message" />
+              <InputRightElement width="4.5rem">
+                <button type="submit">
+                  <IoIosSend />
+                </button>
+              </InputRightElement>
+            </InputGroup>
+          </form>
+        </Stack>
+      </CardBody>
+    </Card>
   );
 }
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const [salons, setSalons] = useState([]);
-  const [messages, setMessages] = useState([]);
+  const [rooms, setRooms] = useState([]);
+  const [messages, setMessages] = useState([
+    {
+      name: "Hey salut mec tu veux qu'on se touche?",
+      author: "Personne 1",
+      date: "now",
+    },
+    {
+      name: "Carrément, t'es vers où toi?",
+      author: "Personne 2",
+      date: "yesterday",
+    },
+    {
+      name: "Le Gers et toi?",
+      author: "Personne 1",
+      date: "yesterday",
+    },
+  ]);
+  const [activeRoom, setActiveRoom] = useState(rooms[0] || null);
+  const [channelListVisibility, setChannelListVisibility] = useState(false);
 
   function createRoom(room) {
     socket.emit("create room", room);
@@ -46,7 +164,22 @@ function App() {
   }
 
   function publishMessage(message) {
-    socket.emit("publish message", message);
+    const commands = [
+      "/nick",
+      "/list",
+      "/create",
+      "/delete",
+      "/join",
+      "/quit",
+      "/users",
+      "/msg",
+    ];
+    if (message[0] === "/")
+      commands.includes(message)
+        ? console.log("good boy")
+        : console.log("unknown command");
+    if (message === "/list") setChannelListVisibility((v) => !v);
+    else socket.emit("publish message", message);
   }
 
   function deleteMessage(message) {
@@ -55,20 +188,16 @@ function App() {
 
   useEffect(() => {
     function onConnect() {
-      // console.log("connecté au back");
       setIsConnected(true);
     }
 
     function onDisconnect() {
-      // console.log("deconnecté");
       setIsConnected(false);
     }
 
     function onGetRooms(rooms) {
-      // console.log("bipboop je vais chercher les salons");
-      console.log(rooms);
-      console.log("ongetrooms function");
-      setSalons(() => rooms);
+      setRooms(() => rooms);
+      setActiveRoom(() => rooms[0]);
     }
 
     socket.on("connected", onConnect);
@@ -80,31 +209,32 @@ function App() {
       socket.off("disconnect", onDisconnect);
       socket.off("rooms", onGetRooms);
     };
-  }, [salons]);
+  }, [rooms]);
 
   return (
     <div className="App">
-      {isConnected ? "connecté!" : "Non connecté"}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          createRoom(e.target[0].value);
-        }}
-      >
-        <input type="text"></input>
-        <button type="submit">Create room</button>
-      </form>
+      {isConnected ? (
+        <PiPlugsConnectedBold size={"3em"} />
+      ) : (
+        <PiPlugsBold size={"3em"} />
+      )}
 
-      <ChannelList
-        salons={salons}
-        changeRoom={changeRoom}
-        deleteRoom={deleteRoom}
-      />
-      <ul>
-        {messages.map((message) => (
-          <Message message={message} />
-        ))}
-      </ul>
+      <NewChannelForm createRoom={createRoom} />
+
+      <Conversation
+        room={activeRoom}
+        messages={messages}
+        deleteMessage={deleteMessage}
+        publishMessage={publishMessage}
+      >
+        {channelListVisibility && (
+          <ChannelList
+            rooms={rooms}
+            changeRoom={changeRoom}
+            deleteRoom={deleteRoom}
+          />
+        )}
+      </Conversation>
     </div>
   );
 }

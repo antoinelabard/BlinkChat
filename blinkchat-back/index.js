@@ -38,12 +38,31 @@ let repository = new Repository();
 // console.log(rooms);
 io.on("connection", (socket) => {
   // console.log("a user connected");
-  let rooms = repository.getChannels();
+  // async function getdb() {
+  //   let truc = await repository.getChannels();
+  // }
   // console.log(readDb())
   // console.log(rooms);
 
   socket.emit("connected");
-  socket.emit("rooms", rooms);
+  // console.log(roomss);
+  // setTimeout(() => {
+  //   // console.log(rooms);
+  //   let roomss = ;
+  //   setTimeout(() => {
+
+  // console.log(truc);
+  let truc = repository.getChannels().then((truc) => {
+    let channelList = [];
+    for (let i = 0; i < truc.length; i++) {
+      channelList.push(truc[i].name);
+    }
+    socket.emit("rooms", channelList);
+  });
+
+  //   }, 6000);
+  //   socket.emit("rooms", roomss);
+  // }, 6000);
 
   // console.log(mongoData)
   socket.on("create room", (roomName) => {
@@ -61,11 +80,13 @@ io.on("connection", (socket) => {
     // });
     // console.log(repository.getChannels());
     setTimeout(() => {
-      const roomsUpdate = repository.getChannels();
-      console.log(roomsUpdate[roomsUpdate.length - 1]);
-
-      socket.emit("rooms", roomsUpdate);
-      console.log("socket de mise a jour des channels envoyé");
+      let channels = repository.getChannels().then((channels) => {
+        let channelList = [];
+        for (let i = 0; i < channels.length; i++) {
+          channelList.push(channels[i].name);
+        }
+        socket.emit("rooms", channelList);
+      });
     }, 1000);
 
     // gerer lidentité avec des cookies ?
@@ -73,16 +94,16 @@ io.on("connection", (socket) => {
   socket.on("delete room", (roomName) => {
     console.log("deleting room " + roomName);
   });
-  socket.on("change room", (roomName) => {
-    let messages = [];
-    for (let i = 0; i < rooms.length; i++) {
-      // console.log(rooms[i].getName() === roomName);
-      if (rooms[i].getName() === roomName) {
-        // console.log(room);
-        socket.emit("display message", rooms[i]);
-      }
-    }
-  });
+  // socket.on("change room", (roomName) => {
+  //   let messages = [];
+  //   for (let i = 0; i < roomss.length; i++) {
+  //     // console.log(rooms[i].getName() === roomName);
+  //     if (rooms[i].getName() === roomName) {
+  //       // console.log(room);
+  //       socket.emit("display message", rooms[i]);
+  //     }
+  //   }
+  // });
 
   socket.on("publish message", (message) => {
     console.log("publishing message: " + message);
