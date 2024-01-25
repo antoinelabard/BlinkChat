@@ -1,31 +1,3 @@
-// // Define the Message class
-// class Message {
-//   constructor(message, author, date) {
-//     this.message = message;
-//     this.author = author;
-//     this.date = date;
-//   }
-// }
-
-// // Define the Room class
-// class Room {
-//   constructor(name, author) {
-//     this.name = name;
-//     this.author = author;
-//     this.messages = [];
-//   }
-
-//   addMessage(message) {
-//     this.messages.push(message);
-//   }
-//   getName() {
-//     return this.name;
-//   }
-//   getMessages() {
-//     return this.messages;
-//   }
-// }
-
 import express from "express";
 import { createServer } from "node:http";
 import { join } from "node:path";
@@ -94,18 +66,14 @@ io.on("connection", (socket) => {
 
       socket.emit("rooms", roomsUpdate);
       console.log("socket de mise a jour des channels envoyé");
-    }, 3000);
+    }, 1000);
 
     // gerer lidentité avec des cookies ?
   });
   socket.on("delete room", (roomName) => {
-    // console.log("demande de suppresion");
-    console.log("deleting room " + roomName + "...");
+    console.log("deleting room " + roomName);
   });
   socket.on("change room", (roomName) => {
-    // console.log(JSON.stringify(rooms));
-    // console.log(mongoData)
-
     let messages = [];
     for (let i = 0; i < rooms.length; i++) {
       // console.log(rooms[i].getName() === roomName);
@@ -116,11 +84,14 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("publish message", (message) => {
+    console.log("publishing message: " + message);
+  });
+  socket.on("delete message", (message) => {
+    console.log("deleting message: " + message);
+  });
+
   socket.on("disconnect", () => {
     // console.log("user disconnected");
   });
 });
-
-//   server.listen(3000, () => {
-//     console.log('server running at http://localhost:3000');
-//   });

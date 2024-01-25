@@ -3,13 +3,13 @@ import "./App.css";
 import { socket } from "./socket";
 import React, { useState, useEffect } from "react";
 
-function ButtonList({ salons, changeRoomFn, deleteRoomFn }) {
+function ChannelList({ salons, changeRoom, deleteRoom }) {
   return salons.map((salon) => (
     <div>
-      <button key={salon} onClick={() => changeRoomFn(salon)}>
+      <button key={salon} onClick={() => changeRoom(salon)}>
         {salon}
       </button>
-      <button onClick={() => deleteRoomFn(salon)}>x</button>
+      <button onClick={() => deleteRoom(salon)}>x</button>
     </div>
   ));
 }
@@ -20,7 +20,7 @@ function Message({ message }) {
       <h1>{message.message} </h1>
       <h2>{message.author}</h2>
       <h3>{message.date}</h3>
-      <button>X</button>
+      <button>Delete message</button>
     </li>
   );
 }
@@ -30,14 +30,27 @@ function App() {
   const [salons, setSalons] = useState([]);
   const [messages, setMessages] = useState([]);
 
-  function changeRoomFn(room) {
+  function createRoom(room) {
+    socket.emit("create room", room);
+  }
+
+  function changeRoom(room) {
     socket.emit("change room", room);
     socket.on("display message", (value) => {
       setMessages(() => value.messages);
     });
   }
-  function deleteRoomFn(room) {
+
+  function deleteRoom(room) {
     socket.emit("delete room", room);
+  }
+
+  function publishMessage(message) {
+    socket.emit("publish message", message);
+  }
+
+  function deleteMessage(message) {
+    socket.emit("delete message", message);
   }
 
   useEffect(() => {
@@ -75,17 +88,17 @@ function App() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          socket.emit("create room", e.target[0].value);
+          createRoom(e.target[0].value);
         }}
       >
         <input type="text"></input>
-        <button type="submit">add</button>
+        <button type="submit">Create room</button>
       </form>
 
-      <ButtonList
+      <ChannelList
         salons={salons}
-        changeRoomFn={changeRoomFn}
-        deleteRoomFn={deleteRoomFn}
+        changeRoom={changeRoom}
+        deleteRoom={deleteRoom}
       />
       <ul>
         {messages.map((message) => (
