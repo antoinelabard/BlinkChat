@@ -1,5 +1,4 @@
-const mongoose = require('mongoose')
-const uniqueValidator = require('mongoose-unique-validator')
+import mongoose from "mongoose"
 
 const channelSchema = mongoose.Schema({
     name: { type: String, required: true, unique: true },
@@ -8,6 +7,5 @@ const channelSchema = mongoose.Schema({
     messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
 })
 
-channelSchema.plugin(uniqueValidator)
-
-module.exports = mongoose.model('Channel', channelSchema)
+const Channel = mongoose.model('Channel', channelSchema)
+export default Channel

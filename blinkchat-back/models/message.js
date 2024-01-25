@@ -1,13 +1,12 @@
-const mongoose = require('mongoose')
-const uniqueValidator = require('mongoose-unique-validator')
+import mongoose from "mongoose"
 
 const messageSchema = mongoose.Schema({
     text: {type: String, required: true},
     author: {type: String, required: true},
     date: {type: Date, required: true},
-    recipient: {type: String}
+    recipient: {type: String},
+    commandResult: {type: String, enum: ["success", "error"]} // only used when we need to display the result of a command
 })
 
-messageSchema.plugin(uniqueValidator)
-
-module.exports = mongoose.model('Message', messageSchema)
+const Message = mongoose.model('Message', messageSchema)
+export default Message
