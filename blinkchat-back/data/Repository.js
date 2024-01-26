@@ -109,6 +109,25 @@ class Repository {
       }),
     ];
   }
+  getChannelByUser(userId) {
+    return [
+      new Channel({
+        name: "la caverne d'alibaba",
+        author: "anthon",
+        users: ["vicous", "anthon"],
+      }),
+      new Channel({
+        name: "la caverne des 40 voleurs",
+        author: "anthon",
+        users: ["vicous", "anthon"],
+      }),
+      new Channel({
+        name: "i love les pdf",
+        author: "vicous",
+        users: ["vicous", "anthon"],
+      }),
+    ];
+  }
 }
 
 export default Repository;

@@ -31,61 +31,33 @@ app.get("/", (req, res) => {
 
 let repository = new Repository();
 
-// console.log(repository.getChannels());
-
-// truc.addChannel("its victor", "victor");
-// console.log(truc.getChannels());
-// console.log(rooms);
 io.on("connection", (socket) => {
-  // console.log("a user connected");
-  // async function getdb() {
-  //   let truc = await repository.getChannels();
-  // }
-  // console.log(readDb())
-  // console.log(rooms);
+  console.log("a user connected");
 
   socket.emit("connected");
-  // console.log(roomss);
-  // setTimeout(() => {
-  //   // console.log(rooms);
-  //   let roomss = ;
-  //   setTimeout(() => {
+  socket.emit("joined rooms", repository.getChannelByUser(socket.id));
+  socket.on("join room", (roomName) => {
+    console.log("Je suis " + socket.id + " et je veux rejoindre: " + roomName);
 
-  // console.log(truc);
-  let truc = repository.getChannels().then((truc) => {
-    let channelList = [];
-    for (let i = 0; i < truc.length; i++) {
-      channelList.push(truc[i].name);
-    }
-    socket.emit("rooms", channelList);
+    socket.emit("joined rooms", repository.getChannelByUser(socket.id));
   });
 
-  //   }, 6000);
-  //   socket.emit("rooms", roomss);
-  // }, 6000);
+  // });
+  socket.on("get all rooms", () => {
+    let truc = repository.getChannels().then((truc) => {
+      socket.emit("rooms", truc);
+    });
+  });
 
-  // console.log(mongoData)
   socket.on("create room", (roomName) => {
-    // console.log("Je suis" + socket.id);
-    // console.log("demande de creation de " + roomName);
+    console.log("Je suis" + socket.id);
+    console.log("demande de creation de " + roomName);
 
     repository.addChannel(roomName, socket.id);
 
-    // .then(() => {
-    //   const roomsUpdate = repository.getChannels();
-    //   console.log(roomsUpdate[roomsUpdate.length - 1]);
-
-    // socket.emit("rooms", roomsUpdate);
-    // console.log("socket de mise a jour des channels envoyé");
-    // });
-    // console.log(repository.getChannels());
     setTimeout(() => {
       let channels = repository.getChannels().then((channels) => {
-        let channelList = [];
-        for (let i = 0; i < channels.length; i++) {
-          channelList.push(channels[i].name);
-        }
-        socket.emit("rooms", channelList);
+        socket.emit("rooms", channels);
       });
     }, 1000);
 
@@ -94,16 +66,11 @@ io.on("connection", (socket) => {
   socket.on("delete room", (roomName) => {
     console.log("deleting room " + roomName);
   });
-  // socket.on("change room", (roomName) => {
-  //   let messages = [];
-  //   for (let i = 0; i < roomss.length; i++) {
-  //     // console.log(rooms[i].getName() === roomName);
-  //     if (rooms[i].getName() === roomName) {
-  //       // console.log(room);
-  //       socket.emit("display message", rooms[i]);
-  //     }
-  //   }
-  // });
+  // le front demande dafficher une autre room
+  socket.on("change room", (roomName) => {
+    let messages = repository.getMessagesByChannel(roomName);
+    socket.emit("display message", messages);
+  });
 
   socket.on("publish message", (message) => {
     console.log("publishing message: " + message);

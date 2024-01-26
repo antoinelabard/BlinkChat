@@ -20,25 +20,67 @@ import {
   StackDivider,
 } from "@chakra-ui/react";
 
-function ChannelList({ rooms, changeRoom, deleteRoom }) {
-  return rooms ? (
+function Message({ message, deleteMessage }) {
+  return (
+    <Box display={"flex"} justifyContent={"space-between"}>
+      <div>
+        <Heading size="xs" textTransform="uppercase">
+          {message.author}
+        </Heading>
+        <Text fontSize={"xs"}>{message.date}</Text>
+      </div>
+      <Text pt="2" fontSize="sm">
+        {message.text}
+      </Text>
+      <Button
+        size={"xs"}
+        colorScheme={"red"}
+        onClick={() => deleteMessage(message)}
+      >
+        X
+      </Button>
+    </Box>
+  );
+}
+
+function MessageInput({ publishMessage }) {
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        publishMessage(e.target[0].value);
+      }}
+    >
+      <InputGroup>
+        <Input type="text" placeholder="Send a message" />
+        <InputRightElement width="4.5rem">
+          <button type="submit">
+            <IoIosSend />
+          </button>
+        </InputRightElement>
+      </InputGroup>
+    </form>
+  );
+}
+
+function ChannelList({ rooms, deleteRoom, joinRoom }) {
+  return rooms.length ? (
     <Stack style={{ display: "flex", flexWrap: "wrap" }}>
       {rooms.map((room) => (
-        <Box key={room}>
+        <Box key={room.name}>
           <Button
             size={"xs"}
             colorScheme={"red"}
-            onClick={() => deleteRoom(room)}
+            onClick={() => deleteRoom(room.name)}
           >
             x
           </Button>
           <Button
             size={"xs"}
             colorScheme={"teal"}
-            key={room}
-            onClick={() => changeRoom(room)}
+            onClick={() => joinRoom(room.name)}
           >
-            {room}
+            {room.name}
           </Button>
         </Box>
       ))}
@@ -68,57 +110,25 @@ function NewChannelForm({ createRoom }) {
   );
 }
 
-function Conversation({
-  messages,
-  deleteMessage,
-  publishMessage,
-  room,
-  children,
-}) {
+function Conversation({ messages, deleteMessage, publishMessage, room }) {
   return (
     <Card>
       <CardHeader>
-        <Heading size="md">{room}</Heading>
+        {room && <Heading size="md">{room.name}</Heading>}
       </CardHeader>
 
       <CardBody>
         <Stack divider={<StackDivider />} spacing="4" flexWrap={"wrap"}>
-          {messages.map((message, key) => (
-            <Box key={key} display={"flex"} justifyContent={"space-between"}>
-              <div>
-                <Heading size="xs" textTransform="uppercase">
-                  {message.author}
-                </Heading>
-                <Text fontSize={"xs"}>{message.date}</Text>
-              </div>
-              <Text pt="2" fontSize="sm">
-                {message.name}
-              </Text>
-              <Button
-                size={"xs"}
-                colorScheme={"red"}
-                onClick={() => deleteMessage(message)}
-              >
-                X
-              </Button>
-            </Box>
-          ))}
-          <Box>{children}</Box>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              publishMessage(e.target[0].value);
-            }}
-          >
-            <InputGroup>
-              <Input type="text" placeholder="Send a message" />
-              <InputRightElement width="4.5rem">
-                <button type="submit">
-                  <IoIosSend />
-                </button>
-              </InputRightElement>
-            </InputGroup>
-          </form>
+          {room &&
+            messages.map((message, key) => (
+              <Message
+                key={key}
+                message={message}
+                deleteMessage={deleteMessage}
+              />
+            ))}
+
+          <MessageInput publishMessage={publishMessage} />
         </Stack>
       </CardBody>
     </Card>
@@ -128,25 +138,12 @@ function Conversation({
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [rooms, setRooms] = useState([]);
-  const [messages, setMessages] = useState([
-    {
-      name: "Hey salut mec tu veux qu'on se touche?",
-      author: "Personne 1",
-      date: "now",
-    },
-    {
-      name: "Carrément, t'es vers où toi?",
-      author: "Personne 2",
-      date: "yesterday",
-    },
-    {
-      name: "Le Gers et toi?",
-      author: "Personne 1",
-      date: "yesterday",
-    },
-  ]);
-  const [activeRoom, setActiveRoom] = useState(rooms[0] || null);
-  const [channelListVisibility, setChannelListVisibility] = useState(false);
+  const [joinedRooms, setJoinedRooms] = useState([]);
+  const [activeRoom, setActiveRoom] = useState(null);
+  const [activeTab, setActiveTab] = useState(null);
+  const [messages, setMessages] = useState([]);
+
+  console.log(rooms);
 
   function createRoom(room) {
     socket.emit("create room", room);
@@ -154,9 +151,10 @@ function App() {
 
   function changeRoom(room) {
     socket.emit("change room", room);
-    socket.on("display message", (value) => {
-      setMessages(() => value.messages);
-    });
+  }
+
+  function joinRoom(room) {
+    socket.emit("join room", room);
   }
 
   function deleteRoom(room) {
@@ -175,10 +173,18 @@ function App() {
       "/msg",
     ];
     if (message[0] === "/")
-      commands.includes(message)
-        ? console.log("good boy")
-        : console.log("unknown command");
-    if (message === "/list") setChannelListVisibility((v) => !v);
+      switch (message) {
+        case "/list":
+          console.log("list!");
+          socket.emit("get all rooms");
+          setActiveTab(() => "list");
+
+          break;
+        case "/users":
+          console.log("users!");
+          setActiveTab(() => "users");
+          break;
+      }
     else socket.emit("publish message", message);
   }
 
@@ -197,12 +203,18 @@ function App() {
 
     function onGetRooms(rooms) {
       setRooms(() => rooms);
-      setActiveRoom(() => rooms[0]);
+      // setActiveRoom(() => rooms[0]);
     }
 
     socket.on("connected", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("rooms", onGetRooms);
+    socket.on("joined rooms", (channels) => {
+      setJoinedRooms(() => channels);
+    });
+    socket.on("display message", (value) => {
+      setMessages(() => value);
+    });
 
     return () => {
       socket.off("connect", onConnect);
@@ -218,23 +230,32 @@ function App() {
       ) : (
         <PiPlugsBold size={"3em"} />
       )}
-
+      <ul>
+        {joinedRooms.map((c) => (
+          <li>
+            <Button onClick={() => changeRoom(c.name)}>{c.name}</Button>
+          </li>
+        ))}
+      </ul>
       <NewChannelForm createRoom={createRoom} />
-
       <Conversation
         room={activeRoom}
         messages={messages}
         deleteMessage={deleteMessage}
         publishMessage={publishMessage}
-      >
-        {channelListVisibility && (
-          <ChannelList
-            rooms={rooms}
-            changeRoom={changeRoom}
-            deleteRoom={deleteRoom}
-          />
-        )}
-      </Conversation>
+      />
+      {activeTab === null || (activeTab === "list" && rooms) ? (
+        <ChannelList
+          rooms={rooms}
+          deleteRoom={deleteRoom}
+          joinRoom={joinRoom}
+        />
+      ) : activeTab === "users" ? (
+        <h1>a list of users will be displayed here</h1>
+      ) : (
+        // <UserList users={users}/>
+        "this is awkward"
+      )}
     </div>
   );
 }
