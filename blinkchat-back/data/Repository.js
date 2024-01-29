@@ -59,15 +59,27 @@ class Repository {
             })
             return errorMessage
         }
-        return await User.deleteOne({username: username})
-            .then(() => {
-                const successMessage = new Message({
-                    "text": `User ${username} successfully removed.`,
-                    "author": "System",
-                    "date": Date.now(),
-                    "commandResult": "success"
-                })
-                return successMessage
+        return await Channel.findOne({username: username})
+            .then((user) => {
+                if (!user) {
+                    const errorMessage = new Message({
+                        "text": `User ${username} does not exist.`,
+                        "author": "System",
+                        "date": Date.now(),
+                        "commandResult": "error"
+                    })
+                    return errorMessage
+                }
+                return User.deleteOne({username: username})
+                    .then(() => {
+                        const successMessage = new Message({
+                            "text": `User ${username} successfully removed.`,
+                            "author": "System",
+                            "date": Date.now(),
+                            "commandResult": "success"
+                        })
+                        return successMessage
+                    })
             })
     }
 
@@ -83,7 +95,15 @@ class Repository {
         }
         User.findOne({username: oldUsername})
             .then((user) => {
-                console.log(user)
+                if (!user) {
+                    const errorMessage = new Message({
+                        "text": `No user of name ${channel.name}.`,
+                        "author": "System",
+                        "date": Date.now(),
+                        "commandResult": "error"
+                    })
+                    return errorMessage
+                }
                 return User.updateOne({_id: user._id}, {username: newUsername})
                     .then(() => {
                         const successMessage = new Message({
@@ -98,32 +118,51 @@ class Repository {
     }
 
     async getChannels() {
-        await Channel.find()
+        return await Channel.find()
             .then((channels) => {
                 console.log(channels)
                 return channels
             })
-            .catch((error) => console.error(error))
+            .catch((error) => {
+                console.error(error)
+                return []
+            })
     }
 
     async getChannelByName(name) {
-        return new Channel({
-            "name": name,
-            "author": "author",
-            "users": ["Antoine", "Emeric", "Victor"],
-            "messages": []
-        })
+        if (!name) {
+            const errorMessage = new Message({
+                "text": `No channel name provided.`,
+                "author": "System",
+                "date": Date.now(),
+                "commandResult": "error"
+            })
+            return errorMessage
+        }
+        return await Channel.findOne({name: name})
+            .then((channel) => {
+                console.log("yay")
+                return channel
+            })
+            .catch((error) => {
+                console.log(error)
+            })
     }
 
     async addChannel(name, author) {
         if (!name || !author) {
-            console.error("addChannel: One or many empty arguments")
-            return
+            const errorMessage = new Message({
+                "text": `No name or author provided.`,
+                "author": "System",
+                "date": Date.now(),
+                "commandResult": "error"
+            })
+            return errorMessage
         }
         const channel = new Channel({
             "name": name,
             "author": author,
-            "users": [],
+            "users": [author],
         })
         await channel.save()
             .then(() => {
@@ -134,7 +173,6 @@ class Repository {
                     "recipient": author,
                     "commandResult": "success"
                 })
-                console.log(successMessage)
                 return successMessage
             })
             .catch(error => {
@@ -150,7 +188,7 @@ class Repository {
                         })
                     default:
                         return new Message({
-                            "text": "An error occurred",
+                            "text": "An error occurred.",
                             "author": "System",
                             "date": Date.now(),
                             "recipient": author,
@@ -161,24 +199,91 @@ class Repository {
             })
     }
 
-    async renameChannel(channelName, newName, author) {
-        return new Message({
-            "text": `[NOT IMPLEMENTED YET] renameChannel: Success message`,
-            "author": "System",
-            "date": Date.now(),
-            "recipient": author,
-            "commandResult": "success"
-        })
+    async renameChannel(channelName, newName) {
+        if (!channelName || !newName) {
+            const errorMessage = new Message({
+                "text": `No channelName or newName provided username provided.`,
+                "author": "System",
+                "date": Date.now(),
+                "commandResult": "error"
+            })
+            return errorMessage
+        }
+        return await Channel.findOne({name: channelName})
+            .then((channel) => {
+                if (!channel) {
+                    const errorMessage = new Message({
+                        "text": `No channel of name ${channelName}.`,
+                        "author": "System",
+                        "date": Date.now(),
+                        "commandResult": "error"
+                    })
+                    return errorMessage
+                }
+                return Channel.updateOne({_id: channel._id}, {name: newName})
+                    .then(() => {
+                        const successMessage = new Message({
+                            "text": `Channel successfully renamed.`,
+                            "author": "System",
+                            "date": Date.now(),
+                            "commandResult": "success"
+                        })
+                        return successMessage
+                    })
+                    .catch(error => {
+                        switch (error.code) {
+                            case 11000: // duplicate key error
+                                return new Message({
+                                    "text": "A channel with this name already exists.",
+                                    "author": "System",
+                                    "date": Date.now(),
+                                    "commandResult": "error"
+                                })
+                            default:
+                                return new Message({
+                                    "text": "An error occurred.",
+                                    "author": "System",
+                                    "date": Date.now(),
+                                    "commandResult": "error"
+                                })
+                        }
+                    })
+            })
     }
 
-    async deleteChannel(channelName, author) {
-        return new Message({
-            "text": `[NOT IMPLEMENTED YET] deleteChannel: Success message`,
-            "author": "System",
-            "date": Date.now(),
-            "recipient": author,
-            "commandResult": "success"
-        })
+    async deleteChannel(channelName) {
+        if (!channelName) {
+            const errorMessage = new Message({
+                "text": `No channelName provided.`,
+                "author": "System",
+                "date": Date.now(),
+                "commandResult": "error"
+            })
+            return errorMessage
+        }
+        return await Channel.findOne({name: channelName})
+            .then(async (channel) => {
+                if (!channel) {
+                    const errorMessage = new Message({
+                        "text": `Channel ${channelName} does not exist.`,
+                        "author": "System",
+                        "date": Date.now(),
+                        "commandResult": "error"
+                    })
+                    return errorMessage
+                }
+                await Message.deleteMany({channelName: channelName})
+                return Channel.deleteOne({name: channelName})
+                    .then(() => {
+                        const successMessage = new Message({
+                            "text": `Channel ${channelName} successfully deleted.`,
+                            "author": "System",
+                            "date": Date.now(),
+                            "commandResult": "success"
+                        })
+                        return successMessage
+                    })
+            })
     }
 
     async getMessagesByChannel(channelName) {
