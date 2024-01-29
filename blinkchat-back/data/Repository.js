@@ -5,41 +5,97 @@ import User from "../models/user.js"
 class Repository {
 
     async login(username) {
-        const successMessage = new Message({
-            "text": `User successfully created.`,
-            "author": "System",
-            "date": Date.now(),
-            "recipient": author,
-            "commandResult": "success"
+        if (!username) {
+            const errorMessage = new Message({
+                "text": `No username provided.`,
+                "author": "System",
+                "date": Date.now(),
+                "commandResult": "error"
+            })
+            return errorMessage
+        }
+        const user = new User({
+            "username": username
         })
-        console.log(successMessage)
-        return successMessage
+        return await user.save()
+            .then(() => {
+                const successMessage = new Message({
+                    "text": `User ${user.username} successfully created.`,
+                    "author": "System",
+                    "date": Date.now(),
+                    "commandResult": "success"
+                })
+                console.log(successMessage)
+                return successMessage
+            })
+            .catch(error => {
+                switch (error.code) {
+                    case 11000: // duplicate key error
+                        return new Message({
+                            "text": "A user with this name already exists.",
+                            "author": "System",
+                            "date": Date.now(),
+                            "commandResult": "error"
+                        })
+                    default:
+                        return new Message({
+                            "text": "An error occurred.",
+                            "author": "System",
+                            "date": Date.now(),
+                            "commandResult": "error"
+                        })
+                }
+
+            })
     }
 
     async logout(username) {
-        const successMessage = new Message({
-            "text": `User successfully removed.`,
-            "author": "System",
-            "date": Date.now(),
-            "recipient": author,
-            "commandResult": "success"
-        })
-        console.log(successMessage)
-        return successMessage
+        if (!username) {
+            const errorMessage = new Message({
+                "text": `No username provided.`,
+                "author": "System",
+                "date": Date.now(),
+                "commandResult": "error"
+            })
+            return errorMessage
+        }
+        return await User.deleteOne({username: username})
+            .then(() => {
+                const successMessage = new Message({
+                    "text": `User ${username} successfully removed.`,
+                    "author": "System",
+                    "date": Date.now(),
+                    "commandResult": "success"
+                })
+                return successMessage
+            })
     }
 
     async renameUser(oldUsername, newUsername) {
-        const successMessage = new Message({
-            "text": `User successfully renamed.`,
-            "author": "System",
-            "date": Date.now(),
-            "recipient": author,
-            "commandResult": "success"
-        })
-        return successMessage
+        if (!oldUsername || !newUsername) {
+            const errorMessage = new Message({
+                "text": `No new or old username provided.`,
+                "author": "System",
+                "date": Date.now(),
+                "commandResult": "error"
+            })
+            return errorMessage
+        }
+        User.findOne({username: oldUsername})
+            .then((user) => {
+                console.log(user)
+                return User.updateOne({_id: user._id}, {username: newUsername})
+                    .then(() => {
+                        const successMessage = new Message({
+                            "text": `User successfully renamed.`,
+                            "author": "System",
+                            "date": Date.now(),
+                            "commandResult": "success"
+                        })
+                        return successMessage
+                    })
+            })
     }
-
-
 
     async getChannels() {
         await Channel.find()
