@@ -182,23 +182,56 @@ class Repository {
     }
 
     async getMessagesByChannel(channelName) {
-        return [
-            new Message({
-                text: "Short message 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                author: "author1",
-                date: Date.now()
-            }),
-            new Message({
-                text: "Short message 2: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                author: "author2",
-                date: Date.now() - 10000 // now minus 10s
-            }),
-            new Message({
-                text: "Long message: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                author: "author1",
-                date: Date.now() - 20000 // now minus 20s
-            }),
-        ]
+        return await Channel.findOne({channelName: channelName})
+            .then((channel) => {
+                if (!channel) {
+                    const errorMessage = new Message({
+                        "text": `Channel ${channelName} does not exist.`,
+                        "author": "System",
+                        "date": Date.now(),
+                        "commandResult": "error"
+                    })
+                    return errorMessage
+                }
+                return Message.find({channelName: channelName})
+                    .then((channels) => {
+                        console.log(channels)
+                        return channels
+                    })
+                    .catch((error) => {
+                        console.error(error)
+                        return new Message({
+                            "text": "An error occurred.",
+                            "author": "System",
+                            "date": Date.now(),
+                            "commandResult": "error"
+                        })
+                    })
+            })
+    }
+
+    async addMessage(author, text, channelName, recipient) {
+        return await Channel.findOne({name: channelName})
+            .then((channel) => {
+                if (!channel) {
+                    const errorMessage = new Message({
+                        "text": `Channel ${channelName} does not exist.`,
+                        "author": "System",
+                        "date": Date.now(),
+                        "commandResult": "error"
+                    })
+                    return errorMessage
+                }
+                let message = Message({
+                    author: author,
+                    text: text,
+                    date: Date.now(),
+                    channelName: channelName,
+                    recipient: recipient
+                })
+                message.save()
+                    .catch((error) => console.log(error))
+            })
     }
 }
 
