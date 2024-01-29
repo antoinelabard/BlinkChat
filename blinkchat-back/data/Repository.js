@@ -3,15 +3,16 @@ import Message from "../models/message.js"
 
 class Repository {
 
-    getChannels() {
-        Channel.find()
-            .then(channels => {
+    async getChannels() {
+        await Channel.find()
+            .then((channels) => {
+                console.log(channels)
                 return channels
             })
             .catch((error) => console.error(error))
     }
 
-    getChannelByName(name) {
+    async getChannelByName(name) {
         return new Channel({
             "name": name,
             "author": "author",
@@ -20,7 +21,7 @@ class Repository {
         })
     }
 
-    addChannel(name, author) {
+    async addChannel(name, author) {
         if (!name || !author) {
             console.error("addChannel: One or many empty arguments")
             return
@@ -30,7 +31,7 @@ class Repository {
             "author": author,
             "users": [],
         })
-        channel.save()
+        await channel.save()
             .then(() => {
                 const successMessage = new Message({
                     "text": `Channel ${channel.name} successfully created.`,
@@ -66,7 +67,7 @@ class Repository {
             })
     }
 
-    renameChannel(channelName, newName, author) {
+    async renameChannel(channelName, newName, author) {
         return new Message({
             "text": `[NOT IMPLEMENTED YET] renameChannel: Success message`,
             "author": "System",
@@ -76,7 +77,7 @@ class Repository {
         })
     }
 
-    deleteChannel(channelName, author) {
+    async deleteChannel(channelName, author) {
         return new Message({
             "text": `[NOT IMPLEMENTED YET] deleteChannel: Success message`,
             "author": "System",
@@ -86,7 +87,7 @@ class Repository {
         })
     }
 
-    getMessagesByChannel(channelName) {
+    async getMessagesByChannel(channelName) {
         return [
             new Message({
                 text: "Short message 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
@@ -101,7 +102,7 @@ class Repository {
             new Message({
                 text: "Long message: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                 author: "author1",
-                date: Date.now() - 20000 // now minus 10s
+                date: Date.now() - 20000 // now minus 20s
             }),
         ]
     }
