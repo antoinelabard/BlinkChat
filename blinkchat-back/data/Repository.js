@@ -1,7 +1,45 @@
 import Channel from "../models/channel.js"
 import Message from "../models/message.js"
+import User from "../models/user.js"
 
 class Repository {
+
+    async login(username) {
+        const successMessage = new Message({
+            "text": `User successfully created.`,
+            "author": "System",
+            "date": Date.now(),
+            "recipient": author,
+            "commandResult": "success"
+        })
+        console.log(successMessage)
+        return successMessage
+    }
+
+    async logout(username) {
+        const successMessage = new Message({
+            "text": `User successfully removed.`,
+            "author": "System",
+            "date": Date.now(),
+            "recipient": author,
+            "commandResult": "success"
+        })
+        console.log(successMessage)
+        return successMessage
+    }
+
+    async renameUser(oldUsername, newUsername) {
+        const successMessage = new Message({
+            "text": `User successfully renamed.`,
+            "author": "System",
+            "date": Date.now(),
+            "recipient": author,
+            "commandResult": "success"
+        })
+        return successMessage
+    }
+
+
 
     async getChannels() {
         await Channel.find()
