@@ -1,19 +1,34 @@
-import { useState } from "react"
+import { useState } from "react";
 
 export default function Message() {
     const [message, setMessage] = useState({
-        msg : "",
+        msg: "",
     });
-    const handleChange = (e) => {
-        const {name, value} = e.target;
-        setMessage((prevMessage) => ({
-            prevMessage, 
-            [name] : value,
-        })); 
-    } ;
 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setMessage((prevMessage) => ({
+            ...prevMessage, 
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // onSendMessage(message);
+        setMessage("");
+    }
 
     return (
-        <input type="text" name = "message" value = {message.msg} onChange={handleChange}/>
-    )
+        <form style={{height:"15%"}} onSubmit={handleSubmit}>
+            <input
+                style={{ background: "black", height:"100%", width:"80%",padding:"1rem"}}
+                type="text"
+                name="msg"
+                value={message.msg}
+                onChange={handleChange}
+            />
+            <button style={{ width:"20%"}} type="submit">Envoyer</button>
+        </form>
+    );
 }

@@ -10,6 +10,7 @@ import Aside from "./components/Aside";
 import Header from "./components/Header";
 import Main from "./components/Main";
 import Message from "./components/Message";
+import Conversation from "./components/Conversation";
 
 
 function App() {
@@ -136,13 +137,14 @@ function App() {
 
 
     return (
-        <div>
-            <Header/>
-            <Aside/>
-            <Main/>
-            <Message/>
-        </div>
-        
+        < >
+        <Header roomName="test" userName="emeric" />
+       <section style={{display:"grid", gridTemplateColumns:"1fr 5fr" , height:"80%"}}> 
+        <Aside/>
+        <Main/>
+        </section>
+        </>
+    
     );
 
     }
