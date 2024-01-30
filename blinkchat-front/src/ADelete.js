@@ -63,6 +63,8 @@ function MessageInput({ publishMessage }) {
   );
 }
 
+
+
 function ChannelList({ rooms, deleteRoom, joinRoom }) {
   return rooms.length ? (
     <Stack style={{ display: "flex", flexWrap: "wrap" }}>
@@ -75,6 +77,7 @@ function ChannelList({ rooms, deleteRoom, joinRoom }) {
           >
             x
           </Button>
+          
           <Button
             size={"xs"}
             colorScheme={"teal"}

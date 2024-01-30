@@ -9,6 +9,7 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import Aside from "./components/Aside";
 import Header from "./components/Header";
 import Main from "./components/Main";
+import Message from "./components/Message";
 
 
 function App() {
@@ -139,6 +140,7 @@ function App() {
             <Header/>
             <Aside/>
             <Main/>
+            <Message/>
         </div>
         
     );
