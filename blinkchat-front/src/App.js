@@ -15,6 +15,7 @@ import Conversation from "./components/Conversation";
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [rooms, setRooms] = useState([]);
+
   const [nickname, setNickname] = useState("");
   const [errorNickname, setErrorNickname] = useState(false);
 
