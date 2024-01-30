@@ -3,161 +3,190 @@ import Message from "../models/message.js"
 import User from "../models/user.js"
 
 class Repository {
+    DUPLICATE_KEY_ERROR_CODE = 11000
+    SYSTEM_AUTHOR = "System"
+    COMMAND_RESULT_SUCCESS = "success"
+    COMMAND_RESULT_ERROR = "error"
 
+    /**
+     * Add a new user to the database. The username is the same used for all the channels of a server and can be picked
+     * up only once.
+     */
     async login(username) {
+
         if (!username) {
-            const errorMessage = new Message({
+            return new Message({
                 "text": `No username provided.`,
-                "author": "System",
+                "author": this.SYSTEM_AUTHOR,
                 "date": Date.now(),
-                "commandResult": "error"
+                "commandResult": this.COMMAND_RESULT_ERROR
             })
-            return errorMessage
         }
         const user = new User({
             "username": username
         })
         return await user.save()
             .then(() => {
-                const successMessage = new Message({
+                return new Message({
                     "text": `User ${user.username} successfully created.`,
-                    "author": "System",
+                    "author": this.SYSTEM_AUTHOR,
                     "date": Date.now(),
-                    "commandResult": "success"
+                    "commandResult": this.COMMAND_RESULT_SUCCESS
                 })
-                console.log(successMessage)
-                return successMessage
             })
             .catch(error => {
-                switch (error.code) {
-                    case 11000: // duplicate key error
+                    if (error.code === this.DUPLICATE_KEY_ERROR_CODE) {
                         return new Message({
                             "text": "A user with this name already exists.",
-                            "author": "System",
+                            "author": this.SYSTEM_AUTHOR,
                             "date": Date.now(),
-                            "commandResult": "error"
+                            "commandResult": this.COMMAND_RESULT_ERROR
                         })
-                    default:
-                        return new Message({
-                            "text": "An error occurred.",
-                            "author": "System",
-                            "date": Date.now(),
-                            "commandResult": "error"
-                        })
+                    }
+                    return new Message({
+                        "text": "An error occurred.",
+                        "author": this.SYSTEM_AUTHOR,
+                        "date": Date.now(),
+                        "commandResult": this.COMMAND_RESULT_ERROR
+                    })
                 }
-
-            })
+            )
     }
 
+    /**
+     * Remove the user from the server database. After a logout, the username becomes available again for login.
+     * @param username
+     * @returns {Promise<Message>}
+     */
     async logout(username) {
         if (!username) {
-            const errorMessage = new Message({
+            return new Message({
                 "text": `No username provided.`,
-                "author": "System",
+                "author": this.SYSTEM_AUTHOR,
                 "date": Date.now(),
-                "commandResult": "error"
+                "commandResult": this.COMMAND_RESULT_ERROR
             })
-            return errorMessage
         }
-        return await Channel.findOne({username: username})
+        return await User.findOne({username: username})
             .then((user) => {
                 if (!user) {
-                    const errorMessage = new Message({
+                    return new Message({
                         "text": `User ${username} does not exist.`,
-                        "author": "System",
+                        "author": this.SYSTEM_AUTHOR,
                         "date": Date.now(),
-                        "commandResult": "error"
+                        "commandResult": this.COMMAND_RESULT_ERROR
                     })
-                    return errorMessage
                 }
                 return User.deleteOne({username: username})
                     .then(() => {
-                        const successMessage = new Message({
+                        return new Message({
                             "text": `User ${username} successfully removed.`,
-                            "author": "System",
+                            "author": this.SYSTEM_AUTHOR,
                             "date": Date.now(),
-                            "commandResult": "success"
+                            "commandResult": this.COMMAND_RESULT_SUCCESS
                         })
-                        return successMessage
                     })
             })
     }
 
+    /**
+     * Rename the user with if oldUsername is affected, and newUsername is not.
+     * @param oldUsername
+     * @param newUsername
+     * @returns {Promise<Message>}
+     */
     async renameUser(oldUsername, newUsername) {
         if (!oldUsername || !newUsername) {
-            const errorMessage = new Message({
+            return new Message({
                 "text": `No new or old username provided.`,
-                "author": "System",
+                "author": this.SYSTEM_AUTHOR,
                 "date": Date.now(),
-                "commandResult": "error"
+                "commandResult": this.COMMAND_RESULT_ERROR
             })
-            return errorMessage
         }
         User.findOne({username: oldUsername})
             .then((user) => {
                 if (!user) {
-                    const errorMessage = new Message({
-                        "text": `No user of name ${channel.name}.`,
-                        "author": "System",
+                    return new Message({
+                        "text": `No user of name ${oldUsername}.`,
+                        "author": this.SYSTEM_AUTHOR,
                         "date": Date.now(),
-                        "commandResult": "error"
+                        "commandResult": this.COMMAND_RESULT_ERROR
                     })
-                    return errorMessage
                 }
                 return User.updateOne({_id: user._id}, {username: newUsername})
                     .then(() => {
-                        const successMessage = new Message({
+                        return new Message({
                             "text": `User successfully renamed.`,
-                            "author": "System",
+                            "author": this.SYSTEM_AUTHOR,
                             "date": Date.now(),
-                            "commandResult": "success"
+                            "commandResult": this.COMMAND_RESULT_SUCCESS
                         })
-                        return successMessage
+                    }).catch(error => {
+                        if (error.code === this.DUPLICATE_KEY_ERROR_CODE) {
+                            return new Message({
+                                "text": `A user with ${newUsername} already exists.`,
+                                "author": this.SYSTEM_AUTHOR,
+                                "date": Date.now(),
+                                "commandResult": this.COMMAND_RESULT_ERROR
+                            })
+                        }
                     })
             })
     }
 
+    /**
+     * return all the channels of the server
+     * @returns {Promise<Array<Channel>>}
+     */
     async getChannels() {
         return await Channel.find()
             .then((channels) => {
-                console.log(channels)
                 return channels
             })
-            .catch((error) => {
-                console.error(error)
+            .catch(() => {
                 return []
             })
     }
 
+    /**
+     * Return the channel matching the given name, if it exists
+     * @param name
+     * @returns {Promise<Channel|null>}
+     */
     async getChannelByName(name) {
         if (!name) {
-            const errorMessage = new Message({
+            return new Message({
                 "text": `No channel name provided.`,
-                "author": "System",
+                "author": this.SYSTEM_AUTHOR,
                 "date": Date.now(),
-                "commandResult": "error"
+                "commandResult": this.COMMAND_RESULT_ERROR
             })
-            return errorMessage
         }
         return await Channel.findOne({name: name})
             .then((channel) => {
-                console.log("yay")
                 return channel
             })
             .catch((error) => {
                 console.log(error)
+                return null
             })
     }
 
+    /**
+     * add a channel if no channel already exist in the database
+     * @param name
+     * @param author
+     * @returns {Promise<Message>}
+     */
     async addChannel(name, author) {
         if (!name || !author) {
-            const errorMessage = new Message({
+            return new Message({
                 "text": `No name or author provided.`,
-                "author": "System",
+                "author": this.SYSTEM_AUTHOR,
                 "date": Date.now(),
-                "commandResult": "error"
+                "commandResult": this.COMMAND_RESULT_ERROR
             })
-            return errorMessage
         }
         const channel = new Channel({
             "name": name,
@@ -166,168 +195,172 @@ class Repository {
         })
         await channel.save()
             .then(() => {
-                const successMessage = new Message({
+                return new Message({
                     "text": `Channel ${channel.name} successfully created.`,
-                    "author": "System",
+                    "author": this.SYSTEM_AUTHOR,
                     "date": Date.now(),
-                    "recipient": author,
-                    "commandResult": "success"
+                    "commandResult": this.COMMAND_RESULT_SUCCESS
                 })
-                return successMessage
             })
             .catch(error => {
-                console.error(error.code)
-                switch (error.code) {
-                    case 11000: // duplicate key error
-                        return new Message({
-                            "text": "A channel with this name already exists.",
-                            "author": "System",
-                            "date": Date.now(),
-                            "recipient": author,
-                            "commandResult": "error"
-                        })
-                    default:
-                        return new Message({
-                            "text": "An error occurred.",
-                            "author": "System",
-                            "date": Date.now(),
-                            "recipient": author,
-                            "commandResult": "error"
-                        })
+                if (error.code === this.DUPLICATE_KEY_ERROR_CODE) {
+                    return new Message({
+                        "text": `A channel with name ${name} already exists.`,
+                        "author": this.SYSTEM_AUTHOR,
+                        "date": Date.now(),
+                        "commandResult": this.COMMAND_RESULT_ERROR
+                    })
                 }
-
+                return new Message({
+                    "text": "An error occurred.",
+                    "author": this.SYSTEM_AUTHOR,
+                    "date": Date.now(),
+                    "commandResult": this.COMMAND_RESULT_ERROR
+                })
             })
     }
 
-    async renameChannel(channelName, newName) {
-        if (!channelName || !newName) {
-            const errorMessage = new Message({
-                "text": `No channelName or newName provided username provided.`,
-                "author": "System",
+    /**
+     * Rename the channel if oldchannelName is affected and newChannelName is not.
+     * @param oldChannelName
+     * @param newChannelName
+     * @returns {Promise<Message>}
+     */
+    async renameChannel(oldChannelName, newChannelName) {
+        if (!oldChannelName || !newChannelName) {
+            return new Message({
+                "text": `No oldChannelName newChannelName provided username provided.`,
+                "author": this.SYSTEM_AUTHOR,
                 "date": Date.now(),
-                "commandResult": "error"
+                "commandResult": this.COMMAND_RESULT_ERROR
             })
-            return errorMessage
         }
-        return await Channel.findOne({name: channelName})
+        return await Channel.findOne({name: oldChannelName})
             .then((channel) => {
                 if (!channel) {
-                    const errorMessage = new Message({
-                        "text": `No channel of name ${channelName}.`,
-                        "author": "System",
+                    return new Message({
+                        "text": `No channel of name ${oldChannelName}.`,
+                        "author": this.SYSTEM_AUTHOR,
                         "date": Date.now(),
-                        "commandResult": "error"
+                        "commandResult": this.COMMAND_RESULT_ERROR
                     })
-                    return errorMessage
                 }
-                return Channel.updateOne({_id: channel._id}, {name: newName})
+                return Channel.updateOne({_id: channel._id}, {name: newChannelName})
                     .then(() => {
-                        const successMessage = new Message({
+                        return new Message({
                             "text": `Channel successfully renamed.`,
-                            "author": "System",
+                            "author": this.SYSTEM_AUTHOR,
                             "date": Date.now(),
-                            "commandResult": "success"
+                            "commandResult": this.COMMAND_RESULT_SUCCESS
                         })
-                        return successMessage
                     })
                     .catch(error => {
-                        switch (error.code) {
-                            case 11000: // duplicate key error
-                                return new Message({
-                                    "text": "A channel with this name already exists.",
-                                    "author": "System",
-                                    "date": Date.now(),
-                                    "commandResult": "error"
-                                })
-                            default:
-                                return new Message({
-                                    "text": "An error occurred.",
-                                    "author": "System",
-                                    "date": Date.now(),
-                                    "commandResult": "error"
-                                })
+                        if (error.code === this.DUPLICATE_KEY_ERROR_CODE) {
+                            return new Message({
+                                "text": `A channel with name ${newChannelName} already exists.`,
+                                "author": this.SYSTEM_AUTHOR,
+                                "date": Date.now(),
+                                "commandResult": this.COMMAND_RESULT_ERROR
+                            })
                         }
+                        return new Message({
+                            "text": "An error occurred.",
+                            "author": this.SYSTEM_AUTHOR,
+                            "date": Date.now(),
+                            "commandResult": this.COMMAND_RESULT_ERROR
+                        })
                     })
             })
     }
 
+    /**
+     * remove the selected channel if it exists.
+     * @param channelName
+     * @returns {Promise<Message>}
+     */
     async deleteChannel(channelName) {
         if (!channelName) {
-            const errorMessage = new Message({
-                "text": `No channelName provided.`,
-                "author": "System",
+            return new Message({
+                "text": `No channel name provided.`,
+                "author": this.SYSTEM_AUTHOR,
                 "date": Date.now(),
-                "commandResult": "error"
+                "commandResult": this.COMMAND_RESULT_ERROR
             })
-            return errorMessage
         }
         return await Channel.findOne({name: channelName})
             .then(async (channel) => {
                 if (!channel) {
-                    const errorMessage = new Message({
+                    return new Message({
                         "text": `Channel ${channelName} does not exist.`,
-                        "author": "System",
+                        "author": this.SYSTEM_AUTHOR,
                         "date": Date.now(),
-                        "commandResult": "error"
+                        "commandResult": this.COMMAND_RESULT_ERROR
                     })
-                    return errorMessage
                 }
                 await Message.deleteMany({channelName: channelName})
                 return Channel.deleteOne({name: channelName})
                     .then(() => {
-                        const successMessage = new Message({
+                        return new Message({
                             "text": `Channel ${channelName} successfully deleted.`,
-                            "author": "System",
+                            "author": this.SYSTEM_AUTHOR,
                             "date": Date.now(),
-                            "commandResult": "success"
+                            "commandResult": this.COMMAND_RESULT_SUCCESS
                         })
-                        return successMessage
                     })
             })
     }
 
+    /**
+     * Get all the given channel messages, if it exists
+     * @param channelName
+     * @returns {Promise<Array<Message>|Message>}
+     */
     async getMessagesByChannel(channelName) {
         return await Channel.findOne({channelName: channelName})
             .then((channel) => {
                 if (!channel) {
-                    const errorMessage = new Message({
+                    return new Message({
                         "text": `Channel ${channelName} does not exist.`,
-                        "author": "System",
+                        "author": this.SYSTEM_AUTHOR,
                         "date": Date.now(),
-                        "commandResult": "error"
+                        "commandResult": this.COMMAND_RESULT_ERROR
                     })
-                    return errorMessage
                 }
                 return Message.find({channelName: channelName})
                     .then((channels) => {
-                        console.log(channels)
                         return channels
                     })
                     .catch((error) => {
-                        console.error(error)
                         return new Message({
                             "text": "An error occurred.",
-                            "author": "System",
+                            "author": this.SYSTEM_AUTHOR,
                             "date": Date.now(),
-                            "commandResult": "error"
+                            "commandResult": this.COMMAND_RESULT_ERROR
                         })
                     })
             })
     }
 
+    /**
+     * add a message to the given channel
+     * @param text
+     * @param author
+     * @param channelName
+     * @param [recipient]
+     * @returns {Promise<T>}
+     */
     async addMessage(author, text, channelName, recipient) {
         return await Channel.findOne({name: channelName})
             .then((channel) => {
                 if (!channel) {
-                    const errorMessage = new Message({
+                    return new Message({
                         "text": `Channel ${channelName} does not exist.`,
-                        "author": "System",
+                        "author": this.SYSTEM_AUTHOR,
                         "date": Date.now(),
-                        "commandResult": "error"
+                        "commandResult": this.COMMAND_RESULT_ERROR
                     })
-                    return errorMessage
                 }
-                let message = Message({
+                let message = new Message({
                     author: author,
                     text: text,
                     date: Date.now(),
