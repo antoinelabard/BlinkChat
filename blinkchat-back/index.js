@@ -10,10 +10,23 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
+    // origin: "*",
     origin: "http://localhost:3001",
+    methods: ["GET", "POST"],
   },
 });
-
+// const io = require("socket.io")(httpServer, {
+//   cors: {
+//     origin: "http://localhost:8080",
+//     methods: ["GET", "POST"]
+//   }
+// });
+let nicknames = [
+  // {
+  //   nickname: "anton",
+  //   socket: "socket",
+  // },
+];
 const uri = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_CLUSTER}/?retryWrites=true&w=majority`;
 mongoose
   .connect(uri, {
@@ -32,8 +45,12 @@ app.get("/", (req, res) => {
 let repository = new Repository();
 
 io.on("connection", (socket) => {
+  // console.log(socket);
   console.log("a user connected");
-
+  repository.getChannels().then((truc) => {
+    // console.log(truc);
+    socket.emit("rooms", truc);
+  });
   socket.emit("connected");
   socket.emit("joined rooms", repository.getChannelByUser(socket.id));
   socket.on("join room", (roomName) => {
@@ -48,7 +65,15 @@ io.on("connection", (socket) => {
       socket.emit("rooms", truc);
     });
   });
-
+  socket.on("change name", (name) => {
+    if (!nicknames.includes(name)) {
+      nicknames.push(name);
+      socket.emit("nickname ok", name);
+      console.log(nicknames);
+    } else {
+      socket.emit("nickname not allow");
+    }
+  });
   socket.on("create room", (roomName) => {
     console.log("Je suis" + socket.id);
     console.log("demande de creation de " + roomName);
