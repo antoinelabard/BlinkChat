@@ -3,10 +3,10 @@ import Message from "../models/message.js"
 import User from "../models/user.js"
 
 class Repository {
-    DUPLICATE_KEY_ERROR_CODE = 11000
-    SYSTEM_AUTHOR = "System"
-    COMMAND_RESULT_SUCCESS = "success"
-    COMMAND_RESULT_ERROR = "error"
+    static DUPLICATE_KEY_ERROR_CODE = 11000
+    static SYSTEM_AUTHOR = "System"
+    static COMMAND_RESULT_SUCCESS = "success"
+    static COMMAND_RESULT_ERROR = "error"
 
     /**
      * Add a new user to the database. The username is the same used for all the channels of a server and can be picked
@@ -17,9 +17,9 @@ class Repository {
         if (!username) {
             return new Message({
                 "text": `No username provided.`,
-                "author": this.SYSTEM_AUTHOR,
+                "author": Repository.SYSTEM_AUTHOR,
                 "date": Date.now(),
-                "commandResult": this.COMMAND_RESULT_ERROR
+                "commandResult": Repository.COMMAND_RESULT_ERROR
             })
         }
         const user = new User({
@@ -29,25 +29,25 @@ class Repository {
             .then(() => {
                 return new Message({
                     "text": `User ${user.username} successfully created.`,
-                    "author": this.SYSTEM_AUTHOR,
+                    "author": Repository.SYSTEM_AUTHOR,
                     "date": Date.now(),
-                    "commandResult": this.COMMAND_RESULT_SUCCESS
+                    "commandResult": Repository.COMMAND_RESULT_SUCCESS
                 })
             })
             .catch(error => {
-                    if (error.code === this.DUPLICATE_KEY_ERROR_CODE) {
+                    if (error.code === Repository.DUPLICATE_KEY_ERROR_CODE) {
                         return new Message({
                             "text": "A user with this name already exists.",
-                            "author": this.SYSTEM_AUTHOR,
+                            "author": Repository.SYSTEM_AUTHOR,
                             "date": Date.now(),
-                            "commandResult": this.COMMAND_RESULT_ERROR
+                            "commandResult": Repository.COMMAND_RESULT_ERROR
                         })
                     }
                     return new Message({
                         "text": "An error occurred.",
-                        "author": this.SYSTEM_AUTHOR,
+                        "author": Repository.SYSTEM_AUTHOR,
                         "date": Date.now(),
-                        "commandResult": this.COMMAND_RESULT_ERROR
+                        "commandResult": Repository.COMMAND_RESULT_ERROR
                     })
                 }
             )
@@ -62,9 +62,9 @@ class Repository {
         if (!username) {
             return new Message({
                 "text": `No username provided.`,
-                "author": this.SYSTEM_AUTHOR,
+                "author": Repository.SYSTEM_AUTHOR,
                 "date": Date.now(),
-                "commandResult": this.COMMAND_RESULT_ERROR
+                "commandResult": Repository.COMMAND_RESULT_ERROR
             })
         }
         return await User.findOne({username: username})
@@ -72,18 +72,18 @@ class Repository {
                 if (!user) {
                     return new Message({
                         "text": `User ${username} does not exist.`,
-                        "author": this.SYSTEM_AUTHOR,
+                        "author": Repository.SYSTEM_AUTHOR,
                         "date": Date.now(),
-                        "commandResult": this.COMMAND_RESULT_ERROR
+                        "commandResult": Repository.COMMAND_RESULT_ERROR
                     })
                 }
                 return User.deleteOne({username: username})
                     .then(() => {
                         return new Message({
                             "text": `User ${username} successfully removed.`,
-                            "author": this.SYSTEM_AUTHOR,
+                            "author": Repository.SYSTEM_AUTHOR,
                             "date": Date.now(),
-                            "commandResult": this.COMMAND_RESULT_SUCCESS
+                            "commandResult": Repository.COMMAND_RESULT_SUCCESS
                         })
                     })
             })
@@ -99,9 +99,9 @@ class Repository {
         if (!oldUsername || !newUsername) {
             return new Message({
                 "text": `No new or old username provided.`,
-                "author": this.SYSTEM_AUTHOR,
+                "author": Repository.SYSTEM_AUTHOR,
                 "date": Date.now(),
-                "commandResult": this.COMMAND_RESULT_ERROR
+                "commandResult": Repository.COMMAND_RESULT_ERROR
             })
         }
         User.findOne({username: oldUsername})
@@ -109,26 +109,26 @@ class Repository {
                 if (!user) {
                     return new Message({
                         "text": `No user of name ${oldUsername}.`,
-                        "author": this.SYSTEM_AUTHOR,
+                        "author": Repository.SYSTEM_AUTHOR,
                         "date": Date.now(),
-                        "commandResult": this.COMMAND_RESULT_ERROR
+                        "commandResult": Repository.COMMAND_RESULT_ERROR
                     })
                 }
                 return User.updateOne({_id: user._id}, {username: newUsername})
                     .then(() => {
                         return new Message({
                             "text": `User successfully renamed.`,
-                            "author": this.SYSTEM_AUTHOR,
+                            "author": Repository.SYSTEM_AUTHOR,
                             "date": Date.now(),
-                            "commandResult": this.COMMAND_RESULT_SUCCESS
+                            "commandResult": Repository.COMMAND_RESULT_SUCCESS
                         })
                     }).catch(error => {
-                        if (error.code === this.DUPLICATE_KEY_ERROR_CODE) {
+                        if (error.code === Repository.DUPLICATE_KEY_ERROR_CODE) {
                             return new Message({
                                 "text": `A user with ${newUsername} already exists.`,
-                                "author": this.SYSTEM_AUTHOR,
+                                "author": Repository.SYSTEM_AUTHOR,
                                 "date": Date.now(),
-                                "commandResult": this.COMMAND_RESULT_ERROR
+                                "commandResult": Repository.COMMAND_RESULT_ERROR
                             })
                         }
                     })
@@ -158,9 +158,9 @@ class Repository {
         if (!name) {
             return new Message({
                 "text": `No channel name provided.`,
-                "author": this.SYSTEM_AUTHOR,
+                "author": Repository.SYSTEM_AUTHOR,
                 "date": Date.now(),
-                "commandResult": this.COMMAND_RESULT_ERROR
+                "commandResult": Repository.COMMAND_RESULT_ERROR
             })
         }
         return await Channel.findOne({name: name})
@@ -183,9 +183,9 @@ class Repository {
         if (!name || !author) {
             return new Message({
                 "text": `No name or author provided.`,
-                "author": this.SYSTEM_AUTHOR,
+                "author": Repository.SYSTEM_AUTHOR,
                 "date": Date.now(),
-                "commandResult": this.COMMAND_RESULT_ERROR
+                "commandResult": Repository.COMMAND_RESULT_ERROR
             })
         }
         const channel = new Channel({
@@ -197,25 +197,25 @@ class Repository {
             .then(() => {
                 return new Message({
                     "text": `Channel ${channel.name} successfully created.`,
-                    "author": this.SYSTEM_AUTHOR,
+                    "author": Repository.SYSTEM_AUTHOR,
                     "date": Date.now(),
-                    "commandResult": this.COMMAND_RESULT_SUCCESS
+                    "commandResult": Repository.COMMAND_RESULT_SUCCESS
                 })
             })
             .catch(error => {
-                if (error.code === this.DUPLICATE_KEY_ERROR_CODE) {
+                if (error.code === Repository.DUPLICATE_KEY_ERROR_CODE) {
                     return new Message({
                         "text": `A channel with name ${name} already exists.`,
-                        "author": this.SYSTEM_AUTHOR,
+                        "author": Repository.SYSTEM_AUTHOR,
                         "date": Date.now(),
-                        "commandResult": this.COMMAND_RESULT_ERROR
+                        "commandResult": Repository.COMMAND_RESULT_ERROR
                     })
                 }
                 return new Message({
                     "text": "An error occurred.",
-                    "author": this.SYSTEM_AUTHOR,
+                    "author": Repository.SYSTEM_AUTHOR,
                     "date": Date.now(),
-                    "commandResult": this.COMMAND_RESULT_ERROR
+                    "commandResult": Repository.COMMAND_RESULT_ERROR
                 })
             })
     }
@@ -230,9 +230,9 @@ class Repository {
         if (!oldChannelName || !newChannelName) {
             return new Message({
                 "text": `No oldChannelName newChannelName provided username provided.`,
-                "author": this.SYSTEM_AUTHOR,
+                "author": Repository.SYSTEM_AUTHOR,
                 "date": Date.now(),
-                "commandResult": this.COMMAND_RESULT_ERROR
+                "commandResult": Repository.COMMAND_RESULT_ERROR
             })
         }
         return await Channel.findOne({name: oldChannelName})
@@ -240,34 +240,34 @@ class Repository {
                 if (!channel) {
                     return new Message({
                         "text": `No channel of name ${oldChannelName}.`,
-                        "author": this.SYSTEM_AUTHOR,
+                        "author": Repository.SYSTEM_AUTHOR,
                         "date": Date.now(),
-                        "commandResult": this.COMMAND_RESULT_ERROR
+                        "commandResult": Repository.COMMAND_RESULT_ERROR
                     })
                 }
                 return Channel.updateOne({_id: channel._id}, {name: newChannelName})
                     .then(() => {
                         return new Message({
                             "text": `Channel successfully renamed.`,
-                            "author": this.SYSTEM_AUTHOR,
+                            "author": Repository.SYSTEM_AUTHOR,
                             "date": Date.now(),
-                            "commandResult": this.COMMAND_RESULT_SUCCESS
+                            "commandResult": Repository.COMMAND_RESULT_SUCCESS
                         })
                     })
                     .catch(error => {
-                        if (error.code === this.DUPLICATE_KEY_ERROR_CODE) {
+                        if (error.code === Repository.DUPLICATE_KEY_ERROR_CODE) {
                             return new Message({
                                 "text": `A channel with name ${newChannelName} already exists.`,
-                                "author": this.SYSTEM_AUTHOR,
+                                "author": Repository.SYSTEM_AUTHOR,
                                 "date": Date.now(),
-                                "commandResult": this.COMMAND_RESULT_ERROR
+                                "commandResult": Repository.COMMAND_RESULT_ERROR
                             })
                         }
                         return new Message({
                             "text": "An error occurred.",
-                            "author": this.SYSTEM_AUTHOR,
+                            "author": Repository.SYSTEM_AUTHOR,
                             "date": Date.now(),
-                            "commandResult": this.COMMAND_RESULT_ERROR
+                            "commandResult": Repository.COMMAND_RESULT_ERROR
                         })
                     })
             })
@@ -282,9 +282,9 @@ class Repository {
         if (!channelName) {
             return new Message({
                 "text": `No channel name provided.`,
-                "author": this.SYSTEM_AUTHOR,
+                "author": Repository.SYSTEM_AUTHOR,
                 "date": Date.now(),
-                "commandResult": this.COMMAND_RESULT_ERROR
+                "commandResult": Repository.COMMAND_RESULT_ERROR
             })
         }
         return await Channel.findOne({name: channelName})
@@ -292,9 +292,9 @@ class Repository {
                 if (!channel) {
                     return new Message({
                         "text": `Channel ${channelName} does not exist.`,
-                        "author": this.SYSTEM_AUTHOR,
+                        "author": Repository.SYSTEM_AUTHOR,
                         "date": Date.now(),
-                        "commandResult": this.COMMAND_RESULT_ERROR
+                        "commandResult": Repository.COMMAND_RESULT_ERROR
                     })
                 }
                 await Message.deleteMany({channelName: channelName})
@@ -302,9 +302,9 @@ class Repository {
                     .then(() => {
                         return new Message({
                             "text": `Channel ${channelName} successfully deleted.`,
-                            "author": this.SYSTEM_AUTHOR,
+                            "author": Repository.SYSTEM_AUTHOR,
                             "date": Date.now(),
-                            "commandResult": this.COMMAND_RESULT_SUCCESS
+                            "commandResult": Repository.COMMAND_RESULT_SUCCESS
                         })
                     })
             })
@@ -321,9 +321,9 @@ class Repository {
                 if (!channel) {
                     return new Message({
                         "text": `Channel ${channelName} does not exist.`,
-                        "author": this.SYSTEM_AUTHOR,
+                        "author": Repository.SYSTEM_AUTHOR,
                         "date": Date.now(),
-                        "commandResult": this.COMMAND_RESULT_ERROR
+                        "commandResult": Repository.COMMAND_RESULT_ERROR
                     })
                 }
                 return Message.find({channelName: channelName})
@@ -333,9 +333,9 @@ class Repository {
                     .catch((error) => {
                         return new Message({
                             "text": "An error occurred.",
-                            "author": this.SYSTEM_AUTHOR,
+                            "author": Repository.SYSTEM_AUTHOR,
                             "date": Date.now(),
-                            "commandResult": this.COMMAND_RESULT_ERROR
+                            "commandResult": Repository.COMMAND_RESULT_ERROR
                         })
                     })
             })
@@ -355,9 +355,9 @@ class Repository {
                 if (!channel) {
                     return new Message({
                         "text": `Channel ${channelName} does not exist.`,
-                        "author": this.SYSTEM_AUTHOR,
+                        "author": Repository.SYSTEM_AUTHOR,
                         "date": Date.now(),
-                        "commandResult": this.COMMAND_RESULT_ERROR
+                        "commandResult": Repository.COMMAND_RESULT_ERROR
                     })
                 }
                 let message = new Message({
