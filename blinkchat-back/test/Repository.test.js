@@ -35,12 +35,24 @@ afterAll(async () => {
     }
 });
 
-describe('test', () => {
+describe('Repository.login', () => {
     const username = "usertest"
-    it("testcase", async () => {
-        await repo.login(username)
+    it("login successful", async () => {
+        const response = await repo.login(username)
         const savedUser = await User.findOne({username: username})
-        console.log(savedUser)
         expect(savedUser.username).toBe(username)
+        expect(response.commandResult).toBe(Repository.COMMAND_RESULT_SUCCESS)
+    })
+    it("login without username should fail with error message", async () => {
+        const response = await repo.login()
+        const savedUser = await User.findOne({username: username})
+        expect(savedUser).toBeNull()
+        expect(response.commandResult).toBe(Repository.COMMAND_RESULT_ERROR)
+    })
+    it("login with empty username should fail with error message", async () => {
+        const response = await repo.login("")
+        const savedUser = await User.findOne({username: username})
+        expect(savedUser).toBeNull()
+        expect(response.commandResult).toBe(Repository.COMMAND_RESULT_ERROR)
     })
 });
