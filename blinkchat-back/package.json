@@ -24,7 +24,6 @@
     "@babel/core": "^7.23.9",
     "@babel/plugin-transform-modules-commonjs": "^7.23.3",
     "@shelf/jest-mongodb": "^4.2.0",
-    "babel-jest": "^29.7.0",
     "jest": "^29.7.0",
     "mongodb-memory-server": "^9.1.6"
   },
