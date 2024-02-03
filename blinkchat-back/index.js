@@ -46,13 +46,22 @@ let repository = new Repository();
 
 io.on("connection", (socket) => {
   // console.log(socket);
+  // repository.addChannel("chan", "vicous");
+  // // repository.addMessage("vicous", "coucou", "channelTest");
+  // // console.log(repository.getChannels());
+  // repository.getChannelByName("chan").then((truc) => {
+  //   console.log(truc);
+  // });
+  // repository.getChannels("chan").then((truc) => {
+  //   // console.log(truc);
+  // });
   console.log("a user connected");
-  repository.getChannels().then((truc) => {
-    // console.log(truc);
-    socket.emit("rooms", truc);
-  });
+  // repository.getChannels().then((data) => {
+  //   // console.log(truc);
+  //   socket.emit("rooms", data);
+  // });
   socket.emit("connected");
-  socket.emit("joined rooms", repository.getChannelByUser(socket.id));
+  // socket.emit("joined rooms", repository.getChannelByName(socket.id));
   socket.on("join room", (roomName) => {
     console.log("Je suis " + socket.id + " et je veux rejoindre: " + roomName);
 
@@ -66,25 +75,49 @@ io.on("connection", (socket) => {
     });
   });
   socket.on("change name", (name) => {
-    if (!nicknames.includes(name)) {
-      nicknames.push(name);
-      socket.emit("nickname ok", name);
-      console.log(nicknames);
-    } else {
-      socket.emit("nickname not allow");
-    }
+    repository.login(name).then((truc) => {
+      console.log(truc.commandResult);
+      if (truc.commandResult === "success") {
+        socket.emit("nickname ok", name);
+      } else {
+        socket.emit("nickname not allow");
+      }
+
+      // socket.emit("rooms", truc);
+    });
   });
-  socket.on("create room", (roomName) => {
-    console.log("Je suis" + socket.id);
-    console.log("demande de creation de " + roomName);
+  socket.on("choose name", (name) => {
+    repository.login(name).then((truc) => {
+      console.log(truc.commandResult);
+      if (truc.commandResult === "success") {
+        socket.emit("nickname ok", name);
+      } else {
+        socket.emit("choose another nickname");
+      }
 
-    repository.addChannel(roomName, socket.id);
+      // socket.emit("rooms", truc);
+    });
+  });
 
-    setTimeout(() => {
-      let channels = repository.getChannels().then((channels) => {
-        socket.emit("rooms", channels);
-      });
-    }, 1000);
+  socket.on("create room", (roomName, author) => {
+    // console.log("Je suis " + author);
+    // console.log("demande de creation de " + roomName);
+    let truc = repository.addChannel(roomName, author).then((truc) => {
+      if (truc.commandResult === "success") {
+        let truc = repository.getChannels().then((truc) => {
+          socket.emit("rooms", truc);
+        });
+      } else {
+        socket.emit("error");
+      }
+    });
+    // repository.addChannel(roomName, author);
+
+    // setTimeout(() => {
+    //   let channels = repository.getChannels().then((channels) => {
+    //     socket.emit("rooms", channels);
+    //   });
+    // }, 1000);
 
     // gerer lidentité avec des cookies ?
   });
@@ -98,6 +131,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("publish message", (message) => {
+    let truc = repository
+      .addMessage("vicous", "coucou", "maaaa")
+      .then((truc) => {
+        console.log(truc);
+      });
     console.log("publishing message: " + message);
   });
   socket.on("delete message", (message) => {

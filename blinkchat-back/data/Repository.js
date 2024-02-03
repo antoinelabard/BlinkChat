@@ -190,32 +190,31 @@ class Repository {
       author: author,
       users: [author],
     });
-    await channel
-      .save()
-      .then(() => {
+
+    try {
+      await channel.save();
+      return new Message({
+        text: `Channel ${channel.name} successfully created.`,
+        author: this.SYSTEM_AUTHOR,
+        date: Date.now(),
+        commandResult: this.COMMAND_RESULT_SUCCESS,
+      });
+    } catch (error) {
+      if (error.code === this.DUPLICATE_KEY_ERROR_CODE) {
         return new Message({
-          text: `Channel ${channel.name} successfully created.`,
-          author: this.SYSTEM_AUTHOR,
-          date: Date.now(),
-          commandResult: this.COMMAND_RESULT_SUCCESS,
-        });
-      })
-      .catch((error) => {
-        if (error.code === this.DUPLICATE_KEY_ERROR_CODE) {
-          return new Message({
-            text: `A channel with name ${name} already exists.`,
-            author: this.SYSTEM_AUTHOR,
-            date: Date.now(),
-            commandResult: this.COMMAND_RESULT_ERROR,
-          });
-        }
-        return new Message({
-          text: "An error occurred.",
+          text: `A channel with name ${name} already exists.`,
           author: this.SYSTEM_AUTHOR,
           date: Date.now(),
           commandResult: this.COMMAND_RESULT_ERROR,
         });
+      }
+      return new Message({
+        text: "An error occurred.",
+        author: this.SYSTEM_AUTHOR,
+        date: Date.now(),
+        commandResult: this.COMMAND_RESULT_ERROR,
       });
+    }
   }
 
   /**

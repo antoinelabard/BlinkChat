@@ -14,15 +14,23 @@ import Conversation from "./components/Conversation";
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const [rooms, setRooms] = useState([]);
-
   const [nickname, setNickname] = useState("");
+  // list of all rooms
+  const [rooms, setRooms] = useState([""]);
+  // list of all joined rooms
+  const [joinedRooms, setJoinedRooms] = useState([""]);
+  // the current room name display
+  const [activeRoom, setActiveRoom] = useState(null);
+
+  const [messages, setMessages] = useState([]);
+
+  // seulement pour la 1ere page
   const [errorNickname, setErrorNickname] = useState(false);
 
-  const [joinedRooms, setJoinedRooms] = useState([]);
-  const [activeRoom, setActiveRoom] = useState(null);
-  const [activeTab, setActiveTab] = useState(null);
-  const [messages, setMessages] = useState([]);
+  // affiche un messgae derreur sur la page principle
+  const [errorCommand, setErrorCommand] = useState(false);
+
+  // const [activeTab, setActiveTab] = useState(null);
 
   //a delete
 
@@ -43,15 +51,16 @@ function App() {
   }
 
   function changeName(nickname) {
-    socket.emit("change nickname", nickname);
+    console.log("demande de changement de nickn,ame");
+    socket.emit("change name", nickname);
   }
 
   function getRooms() {
-    setActiveTab(() => "list");
+    socket.emit("get all rooms");
   }
 
   function getUsers(room) {
-    setActiveTab(() => "users");
+    // setActiveTab(() => "users");
   }
 
   function publishMessage(message) {
@@ -65,46 +74,69 @@ function App() {
       "/users",
       "/msg",
     ];
-    if (message[0] === "/")
-      switch (message) {
-        case "/nick":
-          console.log("change name!");
-          changeName(message.substring(6));
-          break;
-
-        case "/list":
-          console.log("list!");
-          getRooms();
-          break;
-
-        case "/users":
-          console.log("users!");
-          setActiveTab(() => "users");
-          break;
-
-        case "/create":
-          console.log("create room!");
-          createRoom(message.substring(9));
-          break;
-
-        case "/delete":
-          console.log("delete room");
-          deleteRoom(rooms);
-          break;
-
-        case "/join":
-          console.log("join room!");
-          joinRoom(rooms);
-          break;
-
-        case "/quit":
-          console.log("quit room!");
-          //aucune idée a revoir
-          break;
+    let args = message.split(" ");
+    // console.log(args);
+    // console.log("args.length:" + args.length);
+    // console.log("coucou");
+    if (message[0] === "/") {
+      // fait
+      if (message.startsWith("/nick") && args.length > 1) {
+        changeName(args[1]);
+        // fait (a gerer comment on passe de liste de room a l'affichage de message (03/02))
+      } else if (message.startsWith("/list") && args.length == 1) {
+        getRooms();
+      } else if (message.startsWith("/create")) {
+        if (args.length === 2) {
+          socket.emit("create room", args[1], nickname);
+        } else {
+          setErrorCommand(true);
+        }
+      } else if (message === "/commands") {
+      } else {
+        setErrorCommand(true);
       }
-    else socket.emit("publish message", message);
+
+      // console.log("provide a nickname");
+    } else {
+      socket.emit("publish message", message, activeRoom);
+    }
   }
 
+  //   case "/list":
+  //     // exemple "/list truc"
+  //     if (message.split("").length > 1) {
+  //     } else {
+  //       console.log("list!");
+  //       getRooms();
+  //     }
+
+  //     break;
+
+  //   case "/users":
+  //     console.log("users!");
+  //     setActiveTab(() => "users");
+  //     break;
+
+  //   case "/create":
+  //     console.log("create room!");
+  //     createRoom(message.substring(9));
+  //     break;
+
+  //   case "/delete":
+  //     console.log("delete room");
+  //     deleteRoom(rooms);
+  //     break;
+
+  //   case "/join":
+  //     console.log("join room!");
+  //     joinRoom(rooms);
+  //     break;
+
+  //   case "/quit":
+  //     console.log("quit room!");
+  //     //aucune idée a revoir
+  //     break;
+  // }
   function deleteMessage(message) {
     socket.emit("delete message", message);
   }
@@ -128,7 +160,13 @@ function App() {
       setNickname(name);
     }
     function onChangeNameNotOk() {
+      setErrorCommand(true);
+    }
+    function onChooseNameNotOk() {
       setErrorNickname(true);
+    }
+    function OnError() {
+      setErrorCommand(true);
     }
 
     function onJoinRoom(channels) {
@@ -136,9 +174,11 @@ function App() {
     }
     socket.on("nickname ok", onChangeNameOk);
     socket.on("nickname not allow", onChangeNameNotOk);
+    socket.on("choose another nickname", onChooseNameNotOk);
     socket.on("connected", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("rooms", onGetRooms);
+    socket.on("error", OnError);
     socket.on("joined rooms", onJoinRoom);
     // socket.on("joined rooms", (value) => onJoinRoom(value));
     socket.on("display message", (value) => setMessages(() => value));
@@ -148,7 +188,11 @@ function App() {
     <>
       {nickname ? (
         <>
-          <Header roomName="test" userName={nickname} />
+          <Header
+            roomName={activeRoom}
+            userName={nickname}
+            errorCommand={errorCommand}
+          />
           <section
             style={{
               display: "grid",
@@ -156,17 +200,21 @@ function App() {
               height: "80%",
             }}
           >
-            <Aside rooms={rooms} />
-            <Main />
+            <Aside joinedRooms={joinedRooms} />
+            <Main
+              publishMessage={publishMessage}
+              rooms={rooms}
+              setErrorCommand={setErrorCommand}
+            />
           </section>
         </>
       ) : (
         <>
           <form
+            id="chooseNickname"
             onSubmit={(e) => {
               e.preventDefault();
-              console.log(e);
-              socket.emit("change name", e.target[0].value);
+              socket.emit("choose name", e.target[0].value);
             }}
           >
             <input placeholder="choose a nickname"></input>

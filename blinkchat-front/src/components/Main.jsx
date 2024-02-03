@@ -1,11 +1,14 @@
-import Conversation from "./Conversation"
-import Message from "./Message"
+import Conversation from "./Conversation";
+import Message from "./Message";
 
-export default function Main({}) {
-    return (
-        <main style={{height:"100%"}}>
-            <Conversation/>
-            <Message/>
-        </main>
-    )
+export default function Main({ publishMessage, rooms, setErrorCommand }) {
+  return (
+    <main style={{ height: "100%" }}>
+      <Conversation rooms={rooms} />
+      <Message
+        publishMessage={publishMessage}
+        setErrorCommand={setErrorCommand}
+      />
+    </main>
+  );
 }
