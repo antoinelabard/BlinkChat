@@ -152,7 +152,7 @@ class Repository {
     /**
      * Return the channel matching the given name, if it exists
      * @param name
-     * @returns {Promise<Channel|null>}
+     * @returns {Promise<Channel|Message>}
      */
     async getChannelByName(name) {
         if (!name) {
@@ -168,8 +168,37 @@ class Repository {
                 return channel
             })
             .catch((error) => {
-                console.log(error)
-                return null
+                return new Message({
+                    "text": "An error occurred.",
+                    "author": this.SYSTEM_AUTHOR,
+                    "date": Date.now(),
+                    "commandResult": this.COMMAND_RESULT_ERROR
+                })
+            })
+    }
+
+    /**
+     * Return a list of the channels the user has subscribed to.
+     * @param username
+     * @returns {Promise<[Channel]|Message>}
+     */
+    async getUserSubscribedChannels(username) {
+        if (!username) {
+            return new Message({
+                "text": `No username provided.`,
+                "author": this.SYSTEM_AUTHOR,
+                "date": Date.now(),
+                "commandResult": this.COMMAND_RESULT_ERROR
+            })
+        }
+        return await Channel.find({users: username})
+            .catch((error) => {
+                return new Message({
+                    "text": "An error occurred.",
+                    "author": this.SYSTEM_AUTHOR,
+                    "date": Date.now(),
+                    "commandResult": this.COMMAND_RESULT_ERROR
+                })
             })
     }
 
