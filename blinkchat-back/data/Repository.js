@@ -193,7 +193,7 @@ class Repository {
             "author": author,
             "users": [author],
         })
-        await channel.save()
+        return await channel.save()
             .then(() => {
                 return new Message({
                     "text": `Channel ${channel.name} successfully created.`,
@@ -347,7 +347,7 @@ class Repository {
      * @param author
      * @param channelName
      * @param [recipient]
-     * @returns {Promise<T>}
+     * @returns {Promise<Message>}
      */
     async addMessage(author, text, channelName, recipient) {
         return await Channel.findOne({name: channelName})
