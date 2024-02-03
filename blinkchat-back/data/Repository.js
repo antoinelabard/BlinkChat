@@ -229,7 +229,7 @@ class Repository {
     async renameChannel(oldChannelName, newChannelName) {
         if (!oldChannelName || !newChannelName) {
             return new Message({
-                "text": `No oldChannelName newChannelName provided username provided.`,
+                "text": `No oldChannelName or newChannelName provided.`,
                 "author": this.SYSTEM_AUTHOR,
                 "date": Date.now(),
                 "commandResult": this.COMMAND_RESULT_ERROR
@@ -255,14 +255,6 @@ class Repository {
                         })
                     })
                     .catch(error => {
-                        if (error.code === this.DUPLICATE_KEY_ERROR_CODE) {
-                            return new Message({
-                                "text": `A channel with name ${newChannelName} already exists.`,
-                                "author": this.SYSTEM_AUTHOR,
-                                "date": Date.now(),
-                                "commandResult": this.COMMAND_RESULT_ERROR
-                            })
-                        }
                         return new Message({
                             "text": "An error occurred.",
                             "author": this.SYSTEM_AUTHOR,
@@ -270,6 +262,133 @@ class Repository {
                             "commandResult": this.COMMAND_RESULT_ERROR
                         })
                     })
+            })
+    }
+
+    /**
+     * add a logged-in user to the given channel
+     * @param channelName
+     * @param username
+     * @returns {Promise<Message>}
+     */
+    async addUserToChannel(channelName, username) {
+        if (!channelName || !username) {
+            return new Message({
+                "text": `No channelName or username provided.`,
+                "author": this.SYSTEM_AUTHOR,
+                "date": Date.now(),
+                "commandResult": this.COMMAND_RESULT_ERROR
+            })
+        }
+        const channel = await Channel.findOne({name: channelName})
+        const user = await User.findOne({username: username})
+        if (!channel) {
+            return new Message({
+                "text": `No channel of name ${channelName}.`,
+                "author": this.SYSTEM_AUTHOR,
+                "date": Date.now(),
+                "commandResult": this.COMMAND_RESULT_ERROR
+            })
+        }
+        if (!user) {
+            return new Message({
+                "text": `No user of name ${username}.`,
+                "author": this.SYSTEM_AUTHOR,
+                "date": Date.now(),
+                "commandResult": this.COMMAND_RESULT_ERROR
+            })
+        }
+        if (channel.users.includes(user.username)) {
+            return new Message({
+                "text": `The user ${username} is already in the channel ${channelName}.`,
+                "author": this.SYSTEM_AUTHOR,
+                "date": Date.now(),
+                "commandResult": this.COMMAND_RESULT_ERROR
+            })
+        }
+
+        let users = channel.users
+        users.push(username)
+        return Channel.updateOne({_id: channel._id}, {users: users})
+            .then(() => {
+                return new Message({
+                    "text": `User ${username} successfully added to the channel ${channelName}.`,
+                    "author": this.SYSTEM_AUTHOR,
+                    "date": Date.now(),
+                    "commandResult": this.COMMAND_RESULT_SUCCESS
+                })
+            })
+            .catch(error => {
+                return new Message({
+                    "text": "An error occurred.",
+                    "author": this.SYSTEM_AUTHOR,
+                    "date": Date.now(),
+                    "commandResult": this.COMMAND_RESULT_ERROR
+                })
+            })
+    }
+
+    /**
+     * remove a logged-in user to the given channel
+     * @param channelName
+     * @param username
+     * @returns {Promise<Message>}
+     */
+    async removeUserFromChannel(channelName, username) {
+        if (!channelName || !username) {
+            return new Message({
+                "text": `No channelName or username provided.`,
+                "author": this.SYSTEM_AUTHOR,
+                "date": Date.now(),
+                "commandResult": this.COMMAND_RESULT_ERROR
+            })
+        }
+        const channel = await Channel.findOne({name: channelName})
+        const user = await User.findOne({username: username})
+        if (!channel) {
+            return new Message({
+                "text": `No channel of name ${channelName}.`,
+                "author": this.SYSTEM_AUTHOR,
+                "date": Date.now(),
+                "commandResult": this.COMMAND_RESULT_ERROR
+            })
+        }
+        if (!user) {
+            return new Message({
+                "text": `No user of name ${username}.`,
+                "author": this.SYSTEM_AUTHOR,
+                "date": Date.now(),
+                "commandResult": this.COMMAND_RESULT_ERROR
+            })
+        }
+        if (!channel.users.includes(user.username)) {
+            return new Message({
+                "text": `The user ${username} is not in the channel ${channelName}.`,
+                "author": this.SYSTEM_AUTHOR,
+                "date": Date.now(),
+                "commandResult": this.COMMAND_RESULT_ERROR
+            })
+        }
+
+        let users = channel.users
+        const index = users.indexOf(username)
+        users.splice(index, 1)
+        return Channel.updateOne({_id: channel._id}, {users: users})
+            .then(() => {
+                return new Message({
+                    "text": `User ${username} successfully removed from the channel ${channelName}.`,
+                    "author": this.SYSTEM_AUTHOR,
+                    "date": Date.now(),
+                    "commandResult": this.COMMAND_RESULT_SUCCESS
+                })
+            })
+            .catch(error => {
+                return new Message({
+                    "text": "An error occurred.",
+                    "author": this.SYSTEM_AUTHOR,
+                    "date": Date.now(),
+                    "commandResult": this.COMMAND_RESULT_ERROR
+                })
             })
     }
 
