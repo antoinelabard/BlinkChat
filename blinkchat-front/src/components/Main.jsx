@@ -1,10 +1,29 @@
-import Conversation from "./Conversation";
+import CommandsList from "./CommandsList";
+import ConversationList from "./ConversationList";
 import Message from "./Message";
+import RoomsList from "./RoomsList";
+import UsersList from "./UserList";
 
-export default function Main({ publishMessage, rooms, setErrorCommand }) {
+export default function Main({
+  publishMessage,
+  rooms,
+  setErrorCommand,
+  activeTab,
+  messages,
+  users,
+  activeRoom,
+}) {
   return (
     <main style={{ height: "100%" }}>
-      <Conversation rooms={rooms} />
+      {activeTab === "commands" ? <CommandsList /> : null}
+      {activeTab === "rooms" ? <RoomsList rooms={rooms} /> : null}
+      {activeTab === "users" ? (
+        <UsersList users={users} activeRoom={activeRoom} />
+      ) : null}
+      {activeTab === "messages" ? (
+        <ConversationList messages={messages} salon={activeRoom} />
+      ) : null}
+
       <Message
         publishMessage={publishMessage}
         setErrorCommand={setErrorCommand}

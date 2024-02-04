@@ -1,36 +1,32 @@
 import "./App.css";
 import { socket } from "./socket";
 import React, { useState, useEffect } from "react";
-import { PiPlugsBold } from "react-icons/pi";
-import { PiPlugsConnectedBold } from "react-icons/pi";
-import { IoIosSend } from "react-icons/io";
-import { IoMdAddCircleOutline } from "react-icons/io";
 // import Channel from "../../blinkchat-back/models/channel";
 import Aside from "./components/Aside";
 import Header from "./components/Header";
 import Main from "./components/Main";
-import Message from "./components/Message";
-import Conversation from "./components/Conversation";
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [nickname, setNickname] = useState("");
   // list of all rooms
-  const [rooms, setRooms] = useState([""]);
+
   // list of all joined rooms
-  const [joinedRooms, setJoinedRooms] = useState([""]);
+  const [joinedRooms, setJoinedRooms] = useState([]);
   // the current room name display
   const [activeRoom, setActiveRoom] = useState(null);
 
   const [messages, setMessages] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [rooms, setRooms] = useState([""]);
 
   // seulement pour la 1ere page
   const [errorNickname, setErrorNickname] = useState(false);
 
   // affiche un messgae derreur sur la page principle
   const [errorCommand, setErrorCommand] = useState(false);
-
-  // const [activeTab, setActiveTab] = useState(null);
+  // definie quel composant occupe l'espace central
+  const [activeTab, setActiveTab] = useState(null);
 
   //a delete
 
@@ -43,7 +39,7 @@ function App() {
   }
 
   function joinRoom(room) {
-    socket.emit("join room", room);
+    socket.emit("join room", room, nickname);
   }
 
   function deleteRoom(room) {
@@ -59,9 +55,9 @@ function App() {
     socket.emit("get all rooms");
   }
 
-  function getUsers(room) {
-    // setActiveTab(() => "users");
-  }
+  // function getUsers(room) {
+  //   setActiveTab(() => "users");
+  // }
 
   function publishMessage(message) {
     const commands = [
@@ -75,15 +71,13 @@ function App() {
       "/msg",
     ];
     let args = message.split(" ");
-    // console.log(args);
-    // console.log("args.length:" + args.length);
-    // console.log("coucou");
+
     if (message[0] === "/") {
       // fait
-      if (message.startsWith("/nick") && args.length > 1) {
+      if (message.startsWith("/nick") && args.length === 2) {
         changeName(args[1]);
         // fait (a gerer comment on passe de liste de room a l'affichage de message (03/02))
-      } else if (message.startsWith("/list") && args.length == 1) {
+      } else if (message === "/list") {
         getRooms();
       } else if (message.startsWith("/create")) {
         if (args.length === 2) {
@@ -92,6 +86,19 @@ function App() {
           setErrorCommand(true);
         }
       } else if (message === "/commands") {
+        setActiveTab("commands");
+      } else if (message.startsWith("/delete") && args.length === 2) {
+        console.log("socket de delete envoyé");
+        socket.emit("delete room", args[1]);
+      } else if (message.startsWith("/join") && args.length === 2) {
+        socket.emit("join room", args[1], nickname);
+      } else if (message.startsWith("/quit") && args.length === 2) {
+        setActiveRoom("");
+        setActiveTab("");
+        socket.emit("quit room", args[1], nickname);
+      } else if (message === "/users" && activeRoom) {
+        console.log("give me all users");
+        socket.emit("give me all users", activeRoom);
       } else {
         setErrorCommand(true);
       }
@@ -149,11 +156,16 @@ function App() {
     function onDisconnect() {
       setIsConnected(false);
     }
+    function onUsers(users) {
+      setUsers(users);
+      setActiveTab("users");
+    }
 
     function onGetRooms(rooms) {
       console.log("socket rooms recu");
       console.log(rooms);
       setRooms(() => rooms);
+      setActiveTab("rooms");
     }
     function onChangeNameOk(name) {
       console.log("bravo tu a choisis le pseudo " + name);
@@ -168,8 +180,11 @@ function App() {
     function OnError() {
       setErrorCommand(true);
     }
-
-    function onJoinRoom(channels) {
+    function onMessages(messages) {
+      setMessages(messages);
+      setActiveTab("messages");
+    }
+    function onJoinedRoom(channels) {
       setJoinedRooms(() => channels);
     }
     socket.on("nickname ok", onChangeNameOk);
@@ -179,7 +194,8 @@ function App() {
     socket.on("disconnect", onDisconnect);
     socket.on("rooms", onGetRooms);
     socket.on("error", OnError);
-    socket.on("joined rooms", onJoinRoom);
+    socket.on("users", onUsers);
+    socket.on("joined rooms", onJoinedRoom);
     // socket.on("joined rooms", (value) => onJoinRoom(value));
     socket.on("display message", (value) => setMessages(() => value));
   }, [rooms]);
@@ -189,7 +205,7 @@ function App() {
       {nickname ? (
         <>
           <Header
-            roomName={activeRoom}
+            activeRoom={activeRoom}
             userName={nickname}
             errorCommand={errorCommand}
           />
@@ -200,11 +216,15 @@ function App() {
               height: "80%",
             }}
           >
-            <Aside joinedRooms={joinedRooms} />
+            <Aside joinedRooms={joinedRooms} setActiveRoom={setActiveRoom} />
             <Main
               publishMessage={publishMessage}
               rooms={rooms}
               setErrorCommand={setErrorCommand}
+              activeTab={activeTab}
+              messages={messages}
+              users={users}
+              activeRoom={activeRoom}
             />
           </section>
         </>

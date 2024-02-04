@@ -1,4 +1,4 @@
-export default function Conversation({ rooms }) {
+export default function RoomsList({ rooms }) {
   console.log(rooms + "ferefer");
 
   // soit une liste de :[username,salon]
@@ -6,6 +6,7 @@ export default function Conversation({ rooms }) {
 
   return (
     <div style={{ border: "5px solid blue", overflowY: "auto", height: "85%" }}>
+      <div>Liste des salons</div>
       <ul>
         {rooms.length ? (
           rooms.map((elem) => (

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function Header({ roomName, userName, errorCommand }) {
+export default function Header({ activeRoom, userName, errorCommand }) {
   return (
     <header
       style={{
@@ -15,7 +15,7 @@ export default function Header({ roomName, userName, errorCommand }) {
       </div>
       {errorCommand ? <div>erreur de commande</div> : null}
       <div>
-        <p>Room: {roomName ? roomName : "no active room"}</p>
+        <p>Room: {activeRoom ? activeRoom : "no active room"}</p>
         <p>User: {userName}</p>
       </div>
     </header>
