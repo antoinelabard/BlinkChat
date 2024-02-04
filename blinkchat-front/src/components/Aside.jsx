@@ -4,6 +4,10 @@ import { socket } from "../socket";
 export default function Aside({ joinedRooms, setActiveRoom }) {
   console.log(joinedRooms);
 
+  function displayRoom(name) {
+    setActiveRoom(name);
+  }
+
   return (
     <aside style={{ height: "100%", border: "5px solid green" }}>
       <h2>Rooms</h2>
