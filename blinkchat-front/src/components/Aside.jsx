@@ -1,21 +1,14 @@
-import { useState } from "react";
-import { socket } from "../socket";
-
-export default function Aside({ joinedRooms, setActiveRoom }) {
-  console.log(joinedRooms);
-
-  function displayRoom(name) {
-    setActiveRoom(name);
-  }
-
+export default function Aside({ joinedRooms, getMessagesByRoom }) {
   return (
     <aside style={{ height: "100%", border: "5px solid green" }}>
       <h2>Rooms</h2>
       <ul>
         {joinedRooms.length ? (
-          joinedRooms.map((elem) => (
-            <li onClick={() => setActiveRoom(elem.name)} key={elem.name}>
-              {JSON.stringify(elem.name)}
+          joinedRooms.map((room) => (
+            <li key={room.name}>
+              <button onClick={() => getMessagesByRoom(room.name)}>
+                {room.name}
+              </button>
             </li>
           ))
         ) : (

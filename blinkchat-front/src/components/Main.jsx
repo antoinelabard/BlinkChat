@@ -21,7 +21,7 @@ export default function Main({
         <UsersList users={users} activeRoom={activeRoom} />
       ) : null}
       {activeTab === "messages" ? (
-        <ConversationList messages={messages} salon={activeRoom} />
+        <ConversationList messages={messages} activeRoom={activeRoom} />
       ) : null}
 
       <Message

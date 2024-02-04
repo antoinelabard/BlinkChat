@@ -10,7 +10,8 @@ export default function RoomsList({ rooms }) {
       <ul>
         {rooms.length ? (
           rooms.map((elem) => (
-            <li key={elem.name}>{JSON.stringify(elem.name)}</li>
+            <li key={elem.name}>{elem.name}</li>
+            // <li key={elem.name}>{JSON.stringify(elem.name)}</li>
           ))
         ) : (
           <li>Pas de salon</li>

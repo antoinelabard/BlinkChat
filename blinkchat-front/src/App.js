@@ -5,6 +5,8 @@ import React, { useState, useEffect } from "react";
 import Aside from "./components/Aside";
 import Header from "./components/Header";
 import Main from "./components/Main";
+import ChooseNicknameForm from "./components/ChooseNicknamePage";
+import PopUp from "./components/PopUp";
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -28,23 +30,36 @@ function App() {
   // definie quel composant occupe l'espace central
   const [activeTab, setActiveTab] = useState(null);
 
+  const [popUpVisible, setPopUpVisible] = useState(false);
+  const [popUpMessage, setPopUpMessage] = useState("");
+
   //a delete
 
-  function createRoom(room) {
-    socket.emit("create room", room);
+  // function createRoom(room) {
+  //   socket.emit("create room", room);
+  // }
+  function popUpDisplay(roomName, nickname) {
+    setPopUpVisible(true);
+    setPopUpMessage(nickname + "à rejoint le salon " + roomName);
+    const timer = setTimeout(() => {
+      setPopUpVisible(false);
+    }, 5000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }
+  function getMessagesByRoom(room) {
+    socket.emit("get messages", room);
   }
 
-  function changeRoom(room) {
-    socket.emit("change room", room);
+  function chooseName(name) {
+    socket.emit("choose name", name);
   }
 
-  function joinRoom(room) {
-    socket.emit("join room", room, nickname);
-  }
-
-  function deleteRoom(room) {
-    socket.emit("delete room", room);
-  }
+  // function deleteRoom(room) {
+  //   socket.emit("delete room", room);
+  // }
 
   function changeName(nickname) {
     console.log("demande de changement de nickn,ame");
@@ -60,16 +75,6 @@ function App() {
   // }
 
   function publishMessage(message) {
-    const commands = [
-      "/nick",
-      "/list",
-      "/create",
-      "/delete",
-      "/join",
-      "/quit",
-      "/users",
-      "/msg",
-    ];
     let args = message.split(" ");
 
     if (message[0] === "/") {
@@ -105,7 +110,7 @@ function App() {
 
       // console.log("provide a nickname");
     } else {
-      socket.emit("publish message", message, activeRoom);
+      socket.emit("publish message", message, activeRoom, nickname);
     }
   }
 
@@ -144,9 +149,9 @@ function App() {
   //     //aucune idée a revoir
   //     break;
   // }
-  function deleteMessage(message) {
-    socket.emit("delete message", message);
-  }
+  // function deleteMessage(message) {
+  //   socket.emit("delete message", message);
+  // }
 
   useEffect(() => {
     function onConnect() {
@@ -154,7 +159,7 @@ function App() {
     }
 
     function onDisconnect() {
-      setIsConnected(false);
+      setIsConnected(() => false);
     }
     function onUsers(users) {
       setUsers(users);
@@ -180,12 +185,24 @@ function App() {
     function OnError() {
       setErrorCommand(true);
     }
-    function onMessages(messages) {
-      setMessages(messages);
-      setActiveTab("messages");
+    function onMessages(messages, roomName) {
+      console.log("socket de message recu");
+      console.log(messages);
+      console.log(roomName);
+      console.log(activeRoom);
+      if (roomName === activeRoom || activeRoom === null) {
+        console.log("nouvelle liste de message en provenance de " + roomName);
+        setMessages(messages);
+
+        setActiveTab("messages");
+        setActiveRoom(roomName);
+      }
     }
     function onJoinedRoom(channels) {
       setJoinedRooms(() => channels);
+    }
+    function onPopUp(roomName, nickname) {
+      popUpDisplay(roomName, nickname);
     }
     socket.on("nickname ok", onChangeNameOk);
     socket.on("nickname not allow", onChangeNameNotOk);
@@ -195,15 +212,19 @@ function App() {
     socket.on("rooms", onGetRooms);
     socket.on("error", OnError);
     socket.on("users", onUsers);
+    socket.on("pop up new user", onPopUp);
     socket.on("joined rooms", onJoinedRoom);
     // socket.on("joined rooms", (value) => onJoinRoom(value));
-    socket.on("display message", (value) => setMessages(() => value));
+    socket.on("display messages", onMessages);
   }, [rooms]);
 
   return (
     <>
       {nickname ? (
         <>
+          {popUpVisible ? (
+            <PopUp popUpDisplay={popUpDisplay} content={popUpMessage} />
+          ) : null}
           <Header
             activeRoom={activeRoom}
             userName={nickname}
@@ -216,7 +237,12 @@ function App() {
               height: "80%",
             }}
           >
-            <Aside joinedRooms={joinedRooms} setActiveRoom={setActiveRoom} />
+            <Aside
+              joinedRooms={joinedRooms}
+              setActiveRoom={setActiveRoom}
+              setActiveTab={setActiveTab}
+              getMessagesByRoom={getMessagesByRoom}
+            />
             <Main
               publishMessage={publishMessage}
               rooms={rooms}
@@ -229,19 +255,11 @@ function App() {
           </section>
         </>
       ) : (
-        <>
-          <form
-            id="chooseNickname"
-            onSubmit={(e) => {
-              e.preventDefault();
-              socket.emit("choose name", e.target[0].value);
-            }}
-          >
-            <input placeholder="choose a nickname"></input>
-            <button type="submit">Valider</button>
-          </form>
-          {errorNickname ? <p>Nickname not available</p> : null}
-        </>
+        <ChooseNicknameForm
+          isConnected={isConnected}
+          errorNickname={errorNickname}
+          chooseName={chooseName}
+        />
       )}
     </>
   );
