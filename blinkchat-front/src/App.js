@@ -25,11 +25,10 @@ function App() {
   const [rooms, setRooms] = useState([""]);
 
   // seulement pour la 1ere page
-  const [errorNickname, setErrorNickname] = useState(false);
 
   // affiche un message d'erreur sur la page principle
   const [errorCommand, setErrorCommand] = useState(false);
-  // definie quel composant occupe l'espace central
+  // definit quel composant occupe l'espace central
   const [activeTab, setActiveTab] = useState(null);
 
   function getMessagesByRoom(room) {
@@ -40,10 +39,6 @@ function App() {
     socket.emit("choose name", name);
   }
 
-  // function deleteRoom(room) {
-  //   socket.emit("delete room", room);
-  // }
-
   function changeName(nickname) {
     console.log("demande de changement de nickn,ame");
     socket.emit("change name", nickname);
@@ -52,10 +47,6 @@ function App() {
   function getRooms() {
     socket.emit("get all rooms");
   }
-
-  // function getUsers(room) {
-  //   setActiveTab(() => "users");
-  // }
 
   function publishMessage(message) {
     let args = message.split(" ");
@@ -96,7 +87,7 @@ function App() {
       socket.emit("publish message", message, activeRoom, nickname);
     }
   }
-
+  //////////////////////////////////////////////////////////////
   //   case "/list":
   //     // exemple "/list truc"
   //     if (message.split("").length > 1) {
@@ -111,30 +102,7 @@ function App() {
   //     console.log("users!");
   //     setActiveTab(() => "users");
   //     break;
-
-  //   case "/create":
-  //     console.log("create room!");
-  //     createRoom(message.substring(9));
-  //     break;
-
-  //   case "/delete":
-  //     console.log("delete room");
-  //     deleteRoom(rooms);
-  //     break;
-
-  //   case "/join":
-  //     console.log("join room!");
-  //     joinRoom(rooms);
-  //     break;
-
-  //   case "/quit":
-  //     console.log("quit room!");
-  //     //aucune idée a revoir
-  //     break;
-  // }
-  // function deleteMessage(message) {
-  //   socket.emit("delete message", message);
-  // }
+  /////////////////////////////////////////////////////////////////////////////
 
   useEffect(() => {
     function onConnect() {
@@ -156,19 +124,18 @@ function App() {
     }
     function onChangeNameOk(name) {
       setNickname(name);
-      toast.success("Tu t'appelles desormais " + name);
+      toast.success("Tu t'appelles desormais " + name, { toastId: 13 });
     }
     function onChangeNameNotOk() {
       setErrorCommand(true);
-      toast.error("Ce pseudo ne convient pas");
+      toast.error("Ce pseudo ne convient pas", { toastId: 14 });
     }
     function onChooseNameNotOk() {
-      setErrorNickname(true);
-      toast.error("Ce pseudo ne convient pas");
+      toast.error("Ce pseudo ne convient pas", { toastId: 15 });
     }
     function OnError() {
       setErrorCommand(true);
-      toast.error("Cette commande n'existe pas");
+      toast.error("Cette commande n'existe pas", { toastId: 16 });
     }
     function onMessages(messages, roomName) {
       // console.log("socket de message recu");
@@ -187,8 +154,11 @@ function App() {
       setJoinedRooms(() => channels);
     }
     function onPopUp(roomName, user, message) {
-      if (user !== nickname) toast.info(message);
-      else toast.info("Vous avez rejoint le salon " + roomName);
+      if (user !== nickname) {
+        toast(message, { toastId: message });
+      } else {
+        toast("Vous avez rejoint le salon " + roomName, { toastId: message });
+      }
     }
     socket.on("nickname ok", onChangeNameOk);
     socket.on("nickname not allow", onChangeNameNotOk);
@@ -200,8 +170,8 @@ function App() {
     socket.on("users", onUsers);
     socket.on("pop up", onPopUp);
     socket.on("joined rooms", onJoinedRoom);
-    // socket.on("joined rooms", (value) => onJoinRoom(value));
     socket.on("display messages", onMessages);
+    // socket.on("joined rooms", (value) => onJoinRoom(value));
   }, [rooms]);
 
   return (
@@ -240,10 +210,7 @@ function App() {
           </section>
         </>
       ) : (
-        <ChooseNicknameForm
-          errorNickname={errorNickname}
-          chooseName={chooseName}
-        />
+        <ChooseNicknameForm chooseName={chooseName} />
       )}
     </>
   );
