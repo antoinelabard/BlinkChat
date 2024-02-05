@@ -60,19 +60,16 @@ table {
 
 #messageForm {
   height: 100%;
+  grid-row-start: 2;
 }
-#messageForm > div {
-  grid-row-start: 1;
-  height: 100%;
-}
-#messageForm > div > input {
+#messageForm > input {
   border: 5px solid black;
   background-color: black;
   height: 100%;
   width: 70%;
   border-radius: 13px;
 }
-#messageForm > div > button {
+#messageForm > button {
   border: 5px solid black;
   background-color: black;
   width: 20%;
@@ -97,6 +94,7 @@ table {
 
 #header {
   height: 20vh;
+  width: 100%;
   background: yellow;
   display: flex;
   justify-content: space-between;

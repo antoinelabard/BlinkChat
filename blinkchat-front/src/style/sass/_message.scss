@@ -1,9 +1,6 @@
 #messageForm {
     height: 100%;
-
-    &>div {
-        grid-row-start: 1;
-        height: 100%;
+        grid-row-start: 2;
         &>input {
             border: 5px solid black;
             background-color: black;
@@ -20,6 +17,4 @@
             border-radius: 13px;
         }
     
-    }
-
     }
