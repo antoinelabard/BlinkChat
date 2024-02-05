@@ -516,6 +516,12 @@ class Repository {
                     .catch((error) => console.log(error))
             })
     }
+
+    async clearDatabase() {
+        await Channel.deleteMany()
+        await User.deleteMany()
+        await Message.deleteMany()
+    }
 }
 
 
