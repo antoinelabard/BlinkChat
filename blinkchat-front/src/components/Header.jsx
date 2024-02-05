@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 export default function Header({ activeRoom, userName, errorCommand }) {
   return (
     <header

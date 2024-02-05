@@ -5,7 +5,10 @@ import Aside from "./components/Aside";
 import Header from "./components/Header";
 import Main from "./components/Main";
 import ChooseNicknameForm from "./components/ChooseNicknamePage";
-import PopUp from "./components/PopUp";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { PiPlugsBold } from "react-icons/pi";
+import { PiPlugsConnectedBold } from "react-icons/pi";
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -24,28 +27,11 @@ function App() {
   // seulement pour la 1ere page
   const [errorNickname, setErrorNickname] = useState(false);
 
-  // affiche un messgae derreur sur la page principle
+  // affiche un message d'erreur sur la page principle
   const [errorCommand, setErrorCommand] = useState(false);
   // definie quel composant occupe l'espace central
   const [activeTab, setActiveTab] = useState(null);
 
-  const [popUpVisible, setPopUpVisible] = useState(false);
-  const [popUpMessage, setPopUpMessage] = useState("");
-
-  //a delete
-
-  function popUpDisplay(roomName, name, message) {
-    console.log();
-    setPopUpVisible(true);
-    setPopUpMessage(message);
-    const timer = setTimeout(() => {
-      setPopUpVisible(false);
-    }, 5000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }
   function getMessagesByRoom(room) {
     socket.emit("get messages", room);
   }
@@ -152,46 +138,47 @@ function App() {
 
   useEffect(() => {
     function onConnect() {
-      setIsConnected(true);
+      setIsConnected(() => true);
     }
 
     function onDisconnect() {
       setIsConnected(() => false);
     }
+
     function onUsers(users) {
       setUsers(users);
       setActiveTab("users");
     }
 
     function onGetRooms(rooms) {
-      console.log("socket rooms recu");
-      console.log(rooms);
       setRooms(() => rooms);
       setActiveTab("rooms");
     }
     function onChangeNameOk(name) {
-      console.log("bravo tu a choisis le pseudo " + name);
       setNickname(name);
+      toast.success("Tu t'appelles desormais " + name);
     }
     function onChangeNameNotOk() {
       setErrorCommand(true);
+      toast.error("Ce pseudo ne convient pas");
     }
     function onChooseNameNotOk() {
       setErrorNickname(true);
+      toast.error("Ce pseudo ne convient pas");
     }
     function OnError() {
       setErrorCommand(true);
+      toast.error("Cette commande n'existe pas");
     }
     function onMessages(messages, roomName) {
-      console.log("socket de message recu");
-      console.log(messages);
-      console.log(roomName);
-      console.log(activeRoom);
-      console.log(roomName === activeRoom || activeRoom === null);
+      // console.log("socket de message recu");
+      // console.log(messages);
+      // console.log(roomName);
+      // console.log(activeRoom);
+      // console.log(roomName === activeRoom || activeRoom === null);
       if (roomName === activeRoom || activeRoom === null) {
-        console.log("nouvelle liste de message en provenance de " + roomName);
+        // console.log("nouvelle liste de message en provenance de " + roomName);
         setMessages(messages);
-
         setActiveTab("messages");
         setActiveRoom(roomName);
       }
@@ -199,9 +186,9 @@ function App() {
     function onJoinedRoom(channels) {
       setJoinedRooms(() => channels);
     }
-    function onPopUp(roomName, nickname, message) {
-      console.log("pop up recu");
-      popUpDisplay(roomName, nickname, message);
+    function onPopUp(roomName, user, message) {
+      if (user !== nickname) toast.info(message);
+      else toast.info("Vous avez rejoint le salon " + roomName);
     }
     socket.on("nickname ok", onChangeNameOk);
     socket.on("nickname not allow", onChangeNameNotOk);
@@ -219,11 +206,10 @@ function App() {
 
   return (
     <>
+      {isConnected ? <PiPlugsConnectedBold /> : <PiPlugsBold />}
+      <ToastContainer />
       {nickname ? (
         <>
-          {popUpVisible ? (
-            <PopUp popUpDisplay={popUpDisplay} content={popUpMessage} />
-          ) : null}
           <Header
             activeRoom={activeRoom}
             userName={nickname}
@@ -255,7 +241,6 @@ function App() {
         </>
       ) : (
         <ChooseNicknameForm
-          isConnected={isConnected}
           errorNickname={errorNickname}
           chooseName={chooseName}
         />

@@ -109,7 +109,7 @@ io.on("connection", (socket) => {
                 emitPopUpToAllUSersOfTheRoom(
                   roomName,
                   nickname,
-                  `${nickname} a quiter le salon ${roomName}`
+                  `${nickname} a quitté le salon ${roomName}`
                 );
               }
             });
@@ -252,17 +252,17 @@ io.on("connection", (socket) => {
         socket.emit("error");
       } else {
         // if()
-        let messagesTab = [];
-        for (let i = 0; i < res.length; i++) {
-          let messageValues = [];
-          messageValues.push(res[i].text);
-          messageValues.push(res[i].author);
-          messageValues.push(res[i].date);
-          messageValues.push(res[i].channelName);
-          messagesTab.push(messageValues);
-        }
-        // console.log(messagesTab);
-        socket.emit("display messages", messagesTab, roomName);
+        // let messagesTab = [];
+        // for (let i = 0; i < res.length; i++) {
+        //   let messageValues = [];
+        //   messageValues.push(res[i].text);
+        //   messageValues.push(res[i].author);
+        //   messageValues.push(res[i].date);
+        //   messageValues.push(res[i].channelName);
+        //   messagesTab.push(messageValues);
+        // }
+        // // console.log(messagesTab);
+        socket.emit("display messages", res, roomName);
       }
     });
   });
@@ -278,17 +278,17 @@ io.on("connection", (socket) => {
           if (res.commandResult === "error") {
             socket.emit("error");
           } else {
-            let messagesTab = [];
-            for (let i = 0; i < res.length; i++) {
-              let messageValues = [];
-              messageValues.push(res[i].text);
-              messageValues.push(res[i].author);
-              messageValues.push(res[i].date);
-              messageValues.push(res[i].channelName);
-              messagesTab.push(messageValues);
-            }
+            // let messagesTab = [];
+            // for (let i = 0; i < res.length; i++) {
+            //   let messageValues = [];
+            //   messageValues.push(res[i].text);
+            //   messageValues.push(res[i].author);
+            //   messageValues.push(res[i].date);
+            //   messageValues.push(res[i].channelName);
+            //   messagesTab.push(messageValues);
+            // }
             // console.log(messagesTab);
-            emitMessagesToAllUSers(messagesTab, activeRoom);
+            emitMessagesToAllUSers(res, activeRoom);
             // socket.emit("display messages", messagesTab, activeRoom);
           }
         });

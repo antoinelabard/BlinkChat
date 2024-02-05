@@ -1,14 +1,6 @@
-import { PiPlugsBold } from "react-icons/pi";
-import { PiPlugsConnectedBold } from "react-icons/pi";
-
-export default function ChooseNicknameForm({
-  isConnected,
-  errorNickname,
-  chooseName,
-}) {
+export default function ChooseNicknameForm({ errorNickname, chooseName }) {
   return (
     <>
-      {isConnected ? <PiPlugsConnectedBold /> : <PiPlugsBold />}
       <form
         id="chooseNickname"
         onSubmit={(e) => {

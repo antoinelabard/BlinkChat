@@ -4,7 +4,7 @@ export default function UsersList({ users, activeRoom }) {
       <div>Liste des Users du salon {activeRoom}</div>
       <ul>
         {users.length ? (
-          users.map((elem) => <li key={elem}>{JSON.stringify(elem)}</li>)
+          users.map((elem) => <li key={elem}>{elem}</li>)
         ) : (
           <li>Pas de salon</li>
         )}
