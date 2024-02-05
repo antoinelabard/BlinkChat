@@ -190,6 +190,7 @@ function App() {
       console.log(messages);
       console.log(roomName);
       console.log(activeRoom);
+      console.log(roomName === activeRoom || activeRoom === null);
       if (roomName === activeRoom || activeRoom === null) {
         console.log("nouvelle liste de message en provenance de " + roomName);
         setMessages(messages);

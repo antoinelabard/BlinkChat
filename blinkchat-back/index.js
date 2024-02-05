@@ -37,6 +37,7 @@ function emitMessagesToAllUSers(messagesTab, roomName) {
     for (let i = 0; i < socketsList.length; i++) {
       for (let j = i; j < channel.users.length; j++) {
         if (socketsList[i].name === channel.users[j]) {
+          console.log(socketsList.length + " personnes connectées");
           console.log("message envoyé a " + socketsList[i].name);
           socketsList[i].socket.emit("display messages", messagesTab, roomName);
         }
