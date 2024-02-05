@@ -464,7 +464,7 @@ class Repository {
      * @returns {Promise<Array<Message>|Message>}
      */
     async getMessagesByChannel(channelName) {
-        return await Channel.findOne({channelName: channelName})
+        return await Channel.findOne({name: channelName})
             .then((channel) => {
                 if (!channel) {
                     return new Message({
@@ -475,9 +475,6 @@ class Repository {
                     })
                 }
                 return Message.find({channelName: channelName})
-                    .then((channels) => {
-                        return channels
-                    })
                     .catch((error) => {
                         return new Message({
                             "text": "An error occurred.",
