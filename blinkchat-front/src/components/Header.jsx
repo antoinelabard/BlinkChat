@@ -2,14 +2,7 @@ import React, { useState } from "react";
 
 export default function Header({ activeRoom, userName, errorCommand }) {
   return (
-    <header
-      style={{
-        height: "20%",
-        background: "yellow",
-        display: "flex",
-        justifyContent: "space-between",
-      }}
-    >
+    <header id="header">
       <div>
         <h1>BlinkChat</h1>
       </div>

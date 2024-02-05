@@ -232,14 +232,7 @@ function App() {
               userName={nickname}
               errorCommand={errorCommand}
             />
-            <section
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 5fr",
-              height: "100%",
-              width: "100%",
-            }}
-            >
+            <section>
             <Aside
               joinedRooms={joinedRooms}
               setActiveRoom={setActiveRoom}

@@ -1,0 +1,11 @@
+#conversationList {
+    overflow: scroll;
+    border: 5px solid black;
+    &>ul {
+        &>li {
+            
+        }
+    }
+        
+}
+    

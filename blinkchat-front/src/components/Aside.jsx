@@ -1,6 +1,6 @@
 export default function Aside({ joinedRooms, getMessagesByRoom }) {
   return (
-    <aside style={{ height: "100%", border: "5px solid green" }}>
+    <aside id="aside">
       <h2>Rooms</h2>
       <ul>
         {joinedRooms.length ? (

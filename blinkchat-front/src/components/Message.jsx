@@ -23,6 +23,7 @@ export default function Message({ publishMessage, setErrorCommand }) {
 
   return (
     <form id="messageForm" onSubmit={handleSubmit}>
+      <div id="inputBox">
       <input
         id="input"
         placeholder="/commands to see all commands"
@@ -34,6 +35,7 @@ export default function Message({ publishMessage, setErrorCommand }) {
       <button type="submit">
         Envoyer
       </button>
+      </div>
     </form>
     // {}
   );
