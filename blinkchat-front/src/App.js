@@ -1,7 +1,6 @@
 import "./App.css";
 import { socket } from "./socket";
 import React, { useState, useEffect } from "react";
-// import Channel from "../../blinkchat-back/models/channel";
 import Aside from "./components/Aside";
 import Header from "./components/Header";
 import Main from "./components/Main";
@@ -35,12 +34,10 @@ function App() {
 
   //a delete
 
-  // function createRoom(room) {
-  //   socket.emit("create room", room);
-  // }
-  function popUpDisplay(roomName, nickname) {
+  function popUpDisplay(roomName, name, message) {
+    console.log();
     setPopUpVisible(true);
-    setPopUpMessage(nickname + "à rejoint le salon " + roomName);
+    setPopUpMessage(message);
     const timer = setTimeout(() => {
       setPopUpVisible(false);
     }, 5000);
@@ -202,8 +199,9 @@ function App() {
     function onJoinedRoom(channels) {
       setJoinedRooms(() => channels);
     }
-    function onPopUp(roomName, nickname) {
-      popUpDisplay(roomName, nickname);
+    function onPopUp(roomName, nickname, message) {
+      console.log("pop up recu");
+      popUpDisplay(roomName, nickname, message);
     }
     socket.on("nickname ok", onChangeNameOk);
     socket.on("nickname not allow", onChangeNameNotOk);
@@ -213,7 +211,7 @@ function App() {
     socket.on("rooms", onGetRooms);
     socket.on("error", OnError);
     socket.on("users", onUsers);
-    socket.on("pop up new user", onPopUp);
+    socket.on("pop up", onPopUp);
     socket.on("joined rooms", onJoinedRoom);
     // socket.on("joined rooms", (value) => onJoinRoom(value));
     socket.on("display messages", onMessages);

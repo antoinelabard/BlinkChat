@@ -35,7 +35,9 @@ function emitMessagesToAllUSers(messagesTab, roomName) {
   // console.log(message + activeRoom + nickname);
   repository.getChannelByName(roomName).then((channel) => {
     for (let i = 0; i < socketsList.length; i++) {
-      for (let j = i; j < channel.users.length; j++) {
+      for (let j = 0; j < channel.users.length; j++) {
+        console.log(socketsList[i].name);
+        console.log(channel.users[j]);
         if (socketsList[i].name === channel.users[j]) {
           console.log(socketsList.length + " personnes connectées");
           console.log("message envoyé a " + socketsList[i].name);
@@ -45,20 +47,22 @@ function emitMessagesToAllUSers(messagesTab, roomName) {
     }
   });
 }
-function emitPopUpToAllUSersOfTheRoom(roomName, senderNickname) {
+function emitPopUpToAllUSersOfTheRoom(roomName, senderNickname, message) {
   // console.log(message + activeRoom + nickname);
+  console.log(message);
   repository.getChannelByName(roomName).then((channel) => {
     for (let i = 0; i < socketsList.length; i++) {
-      for (let j = i; j < channel.users.length; j++) {
-        if (
-          socketsList[i].name === channel.users[j] &&
-          socketsList[i].name !== senderNickname
-        ) {
+      for (let j = 0; j < channel.users.length; j++) {
+        console.log(socketsList[i].name + " " + channel.users[j]);
+        console.log(socketsList[i].name === channel.users[j]);
+        if (socketsList[i].name === channel.users[j]) {
           console.log("pop up envoyé a " + socketsList[i].name);
+
           socketsList[i].socket.emit(
-            "pop up new user",
+            "pop up",
             roomName,
-            senderNickname
+            senderNickname,
+            message
           );
         }
       }
@@ -70,7 +74,7 @@ function sendTo(name) {}
 io.on("connection", (socket) => {
   // repository.addMessage("moi", "coucou les gars", "&").then((res) => {
   //   console.log(res);
-  // });
+  // });cr
 
   socket.emit("connected");
 
@@ -102,6 +106,11 @@ io.on("connection", (socket) => {
               } else {
                 // console.log(joinedRooms);
                 socket.emit("joined rooms", joinedRooms);
+                emitPopUpToAllUSersOfTheRoom(
+                  roomName,
+                  nickname,
+                  `${nickname} a quiter le salon ${roomName}`
+                );
               }
             });
         } else {
@@ -122,7 +131,11 @@ io.on("connection", (socket) => {
             } else {
               // console.log(joinedRooms);
               socket.emit("joined rooms", joinedRooms);
-              emitPopUpToAllUSersOfTheRoom(roomName, nickname);
+              emitPopUpToAllUSersOfTheRoom(
+                roomName,
+                nickname,
+                `${nickname} a rejoint le salon ${roomName}`
+              );
             }
           });
       } else {
@@ -161,6 +174,7 @@ io.on("connection", (socket) => {
       if (truc.commandResult === "success") {
         socket.emit("nickname ok", name);
         socketsList.push({ name: name, socket: socket });
+        console.log(socketsList.length + "personnes connecté");
         // console.log(socketsList);
         // console.log(socketsList.length);
       } else {
@@ -253,7 +267,9 @@ io.on("connection", (socket) => {
     });
   });
   socket.on("publish message", (message, activeRoom, nickname) => {
-    // console.log(message + activeRoom + nickname);
+    console.log(
+      "publis message: " + message + " " + activeRoom + " " + nickname
+    );
     let truc = repository
       .addMessage(nickname, message, activeRoom)
       .then((truc) => {
@@ -277,7 +293,7 @@ io.on("connection", (socket) => {
           }
         });
       });
-    console.log("publishing message: " + message);
+    // console.log("publishing message: " + message);
   });
   socket.on("delete message", (message) => {
     console.log("deleting message: " + message);
@@ -303,7 +319,7 @@ io.on("connection", (socket) => {
             let truc = repository
               .removeUserFromChannel(joinedRooms[index].name, username)
               .then((truc) => {
-                console.log(truc);
+                // console.log(truc);
               });
           }
         }
