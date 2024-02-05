@@ -14,7 +14,7 @@ export default function Main({
   activeRoom,
 }) {
   return (
-    <main style={{ height: "100%" }}>
+    <main id="mainPage">
       {activeTab === "commands" ? <CommandsList /> : null}
       {activeTab === "rooms" ? <RoomsList rooms={rooms} /> : null}
       {activeTab === "users" ? (
