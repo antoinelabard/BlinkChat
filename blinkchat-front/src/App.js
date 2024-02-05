@@ -226,18 +226,20 @@ function App() {
           {popUpVisible ? (
             <PopUp popUpDisplay={popUpDisplay} content={popUpMessage} />
           ) : null}
-          <Header
-            activeRoom={activeRoom}
-            userName={nickname}
-            errorCommand={errorCommand}
-          />
-          <section
+          <body id="mainBody">
+            <Header
+              activeRoom={activeRoom}
+              userName={nickname}
+              errorCommand={errorCommand}
+            />
+            <section
             style={{
               display: "grid",
               gridTemplateColumns: "1fr 5fr",
-              height: "80%",
+              height: "100%",
+              width: "100%",
             }}
-          >
+            >
             <Aside
               joinedRooms={joinedRooms}
               setActiveRoom={setActiveRoom}
@@ -253,7 +255,8 @@ function App() {
               users={users}
               activeRoom={activeRoom}
             />
-          </section>
+            </section>
+          </body>
         </>
       ) : (
         <ChooseNicknameForm

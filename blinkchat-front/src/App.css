@@ -52,4 +52,25 @@ table {
   border-spacing: 0;
 }
 
+#mainPage {
+  height: 100%;
+}
+
+#messageForm {
+  height: 15%;
+}
+#messageForm > input {
+  border: 5px solid black;
+  height: 100%;
+  width: 80%;
+  padding: 1rem;
+}
+#messageForm > button {
+  width: 20%;
+}
+
+#mainBody {
+  height: 100vh;
+}
+
 /*# sourceMappingURL=App.css.map */

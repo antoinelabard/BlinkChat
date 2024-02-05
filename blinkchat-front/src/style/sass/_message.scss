@@ -1,0 +1,14 @@
+#messageForm {
+    height: 15%;
+
+    &>input {
+        border: 5px solid black;
+        height: 100%;
+        width: 80%;
+        padding: 1rem;
+    }
+
+    &>button {
+        width: 20%;
+    }
+}
