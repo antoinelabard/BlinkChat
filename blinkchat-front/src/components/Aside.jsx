@@ -1,14 +1,25 @@
+import { useState } from "react";
+
 export default function Aside({ joinedRooms, getMessagesByRoom }) {
+  const [activeRoom, setActiveRoom] = useState(null);
+
+  const handleRoomClick = (room) => {
+    getMessagesByRoom(room.name);
+    setActiveRoom(room.name);
+  };
+
   return (
     <aside id="aside">
       <h2>Rooms</h2>
       <ul>
         {joinedRooms.length ? (
           joinedRooms.map((room) => (
-            <li key={room.name}>
-              <button onClick={() => getMessagesByRoom(room.name)}>
+            <li 
+              key={room.name} 
+              onClick={() => handleRoomClick(room)}
+              className={activeRoom === room.name ? 'active' : ''}
+            >
                 {room.name}
-              </button>
             </li>
           ))
         ) : (

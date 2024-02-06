@@ -7,14 +7,34 @@
         font-size: 30px;
         text-align: center;
         background-color: #be6944;
-        border: 1px solid black;
+        border: 2px solid black;
         border-bottom: 2px solid #635C59;
     }
     &>ul {
         &>li {
+            display: flex;
             padding-left: 15px;
             border-bottom: 2px solid #635C59;
             background: #373737;
+            height: 50px;
+            align-items: center;
+            color: #fff;
+            font-size: 20px;
+            transition: background 0.3s ease; /* Ajoute une transition fluide pour le changement de couleur */
+
+            &:hover {
+                background: #5461ee; /* Change la couleur au survol */
+            }
+
+            &.active {
+                background: #ff5733; /* Change la couleur lors du clic */
+            }
+
+            a& {
+                text-decoration: none;
+                color: inherit;
+                cursor: pointer;
+            }
         }
     }
 }
