@@ -112,7 +112,7 @@ table {
   background-color: #ebe8e4;
 }
 #messageForm > input {
-  flex: 4; /* 80% of the parent width */
+  flex: 4;
   border: 1px solid #bdafa1;
   margin-right: 10px;
   background: #fff;
@@ -121,7 +121,7 @@ table {
   padding-left: 10px;
 }
 #messageForm > button {
-  flex: 1; /* 20% of the parent width */
+  flex: 1;
   background: #be6944;
   height: 100%;
   border-radius: 4px;
@@ -164,13 +164,13 @@ table {
   align-items: center;
   color: #fff;
   font-size: 20px;
-  transition: background 0.3s ease; /* Ajoute une transition fluide pour le changement de couleur */
+  transition: background 0.3s ease;
 }
 #aside > ul > li:hover {
-  background: #443F3E; /* Change la couleur au survol */
+  background: #443F3E;
 }
 #aside > ul > li.active {
-  background: #282524; /* Change la couleur lors du clic */
+  background: #282524;
 }
 #aside > ul > p {
   font-size: 20px;

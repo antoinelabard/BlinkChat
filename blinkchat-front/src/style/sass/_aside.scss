@@ -23,14 +23,14 @@
             align-items: center;
             color: #fff;
             font-size: 20px;
-            transition: background 0.3s ease; /* Ajoute une transition fluide pour le changement de couleur */
+            transition: background 0.3s ease; 
 
             &:hover {
-                background: #443F3E; /* Change la couleur au survol */
+                background: #443F3E; 
             }
 
             &.active {
-                background: #282524; /* Change la couleur lors du clic */
+                background: #282524; 
             }
         }
         &>p {

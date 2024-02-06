@@ -7,7 +7,7 @@
     background-color: #ebe8e4;
 
     & > input {
-        flex: 4; /* 80% of the parent width */
+        flex: 4; 
         border: 1px solid #bdafa1;
         margin-right: 10px;
         background: #fff;
@@ -17,7 +17,7 @@
     }
 
     & > button {
-        flex: 1; /* 20% of the parent width */
+        flex: 1; 
         background: #be6944;
         height: 100%;
         border-radius: 4px;
