@@ -239,11 +239,7 @@ io.on("connection", (socket) => {
       }
     });
   });
-  // le front demande dafficher une autre room
-  // socket.on("change room", (roomName) => {
-  //   let messages = repository.getMessagesByChannel(roomName);
-  //   socket.emit("display message", messages);
-  // });
+
   socket.on("get messages", (roomName) => {
     console.log("je veux les messages de la room " + roomName);
     let truc = repository.getMessagesByChannel(roomName).then((res) => {
@@ -251,17 +247,6 @@ io.on("connection", (socket) => {
       if (res.commandResult === "error") {
         socket.emit("error");
       } else {
-        // if()
-        // let messagesTab = [];
-        // for (let i = 0; i < res.length; i++) {
-        //   let messageValues = [];
-        //   messageValues.push(res[i].text);
-        //   messageValues.push(res[i].author);
-        //   messageValues.push(res[i].date);
-        //   messageValues.push(res[i].channelName);
-        //   messagesTab.push(messageValues);
-        // }
-        // // console.log(messagesTab);
         socket.emit("display messages", res, roomName);
       }
     });
@@ -278,18 +263,7 @@ io.on("connection", (socket) => {
           if (res.commandResult === "error") {
             socket.emit("error");
           } else {
-            // let messagesTab = [];
-            // for (let i = 0; i < res.length; i++) {
-            //   let messageValues = [];
-            //   messageValues.push(res[i].text);
-            //   messageValues.push(res[i].author);
-            //   messageValues.push(res[i].date);
-            //   messageValues.push(res[i].channelName);
-            //   messagesTab.push(messageValues);
-            // }
-            // console.log(messagesTab);
             emitMessagesToAllUSers(res, activeRoom);
-            // socket.emit("display messages", messagesTab, activeRoom);
           }
         });
       });
@@ -331,3 +305,7 @@ io.on("connection", (socket) => {
     console.log("user disconnected");
   });
 });
+
+//liste des choses a faire
+
+// ondeconect : send pop up to all users from all salons where users has joined
