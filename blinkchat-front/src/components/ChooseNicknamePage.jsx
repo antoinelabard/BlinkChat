@@ -7,20 +7,21 @@ export default function ChooseNicknameForm({
   chooseName,
 }) {
   return (
-    <>
-      {isConnected ? <PiPlugsConnectedBold /> : <PiPlugsBold />}
-      <form
-        id="chooseNickname"
-        onSubmit={(e) => {
-          e.preventDefault();
-          //   socket.emit("choose name", e.target[0].value);
-          chooseName(e.target[0].value);
-        }}
-      >
-        <input placeholder="choose a nickname"></input>
-        <button type="submit">Valider</button>
-      </form>
-      {errorNickname ? <p>Nickname not available</p> : null}
-    </>
+    <div id="form-container">
+      {errorNickname && <p id="error-message">Nickname not available</p>}
+      <div id="chooseNickname">
+        <div id="icon-container">
+          {isConnected ? <PiPlugsConnectedBold /> : <PiPlugsBold />}
+        </div>
+        <form onSubmit={(e) => {
+            e.preventDefault();
+            chooseName(e.target[0].value);
+          }}
+        >
+          <input placeholder="choose a nickname"></input>
+          <button type="submit">Valider</button>
+        </form>
+      </div>
+    </div>
   );
 }
