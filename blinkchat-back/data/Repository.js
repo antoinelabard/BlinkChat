@@ -265,7 +265,7 @@ class Repository {
             })
         }
         return await Channel.findOne({name: oldChannelName})
-            .then((channel) => {
+            .then(async (channel) => {
                 if (!channel) {
                     return new Message({
                         "text": `No channel of name ${oldChannelName}.`,
@@ -274,8 +274,17 @@ class Repository {
                         "commandResult": this.COMMAND_RESULT_ERROR
                     })
                 }
-                return Channel.updateOne({_id: channel._id}, {name: newChannelName})
-                    .then(() => {
+                return await Channel.updateOne({_id: channel._id}, {name: newChannelName})
+                    .then(async () => {
+                        await Message.updateMany({channelName: oldChannelName}, {channelName: newChannelName})
+                            .catch((error) => {
+                                return new Message({
+                                    "text": "An error occurred.",
+                                    "author": this.SYSTEM_AUTHOR,
+                                    "date": Date.now(),
+                                    "commandResult": this.COMMAND_RESULT_ERROR
+                                })
+                            })
                         return new Message({
                             "text": `Channel successfully renamed.`,
                             "author": this.SYSTEM_AUTHOR,
