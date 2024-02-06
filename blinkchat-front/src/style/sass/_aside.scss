@@ -1,9 +1,7 @@
 #aside {
-    height: 80vh;
     background-color: #625B59;
     border-right: 2px solid black;
-
-    
+    overflow: scroll;
 
     &>h2 {
         font-size: 30px;
@@ -11,6 +9,9 @@
         background-color: #be6944;
         border: 2px solid black;
         border-right: none;
+        position: sticky;
+        top: 0;
+        z-index: 1;
     }
     &>ul {
         &>li {
