@@ -1,18 +1,169 @@
-/* Error: "&" may only used at the beginning of a compound selector.
- *    ,
- * 33 |             a& {
- *    |              ^
- *    '
- *   src\style\sass\_aside.scss 33:14  @import
- *   src\style\sass\style.scss 7:9     root stylesheet */
-
-body::before {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
-      "Droid Sans Mono", monospace, monospace;
-  white-space: pre;
-  display: block;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-bottom: 2px solid black;
-  content: 'Error: "&" may only used at the beginning of a compound selector.\a    \2577 \a 33 \2502              a& {\d\a    \2502               ^\a    \2575 \a   src\\style\\sass\\_aside.scss 33:14  @import\a   src\\style\\sass\\style.scss 7:9     root stylesheet';
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
 }
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: "";
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#mainPage {
+  height: 80vh;
+  background-color: #ebe8e4;
+  display: grid;
+  grid-template-rows: 90% 10%;
+  border-top: 2px solid black;
+}
+
+#messageForm {
+  height: 100%;
+  display: flex;
+  grid-row-start: 2;
+  grid-template-columns: 5fr 1fr;
+  padding: 1rem;
+  background-color: #ebe8e4;
+}
+#messageForm > input {
+  flex: 4; /* 80% of the parent width */
+  border: 1px solid #bdafa1;
+  margin-right: 10px;
+  background: #fff;
+  height: 100%;
+  border-radius: 5px;
+  padding-left: 10px;
+}
+#messageForm > button {
+  flex: 1; /* 20% of the parent width */
+  background: #be6944;
+  height: 100%;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  color: #fff;
+}
+
+#mainBody {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 20% 80%;
+}
+#mainBody > section {
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+  height: 80vh;
+  width: 100%;
+}
+
+#aside {
+  height: 80vh;
+  background-color: #625B59;
+  border-right: 2px solid black;
+}
+#aside > h2 {
+  font-size: 30px;
+  text-align: center;
+  background-color: #be6944;
+  border: 2px solid black;
+  border-right: none;
+}
+#aside > ul > li {
+  display: flex;
+  padding-left: 15px;
+  border-bottom: 2px solid #BBADA8;
+  background: #625B59;
+  height: 50px;
+  align-items: center;
+  color: #fff;
+  font-size: 20px;
+  transition: background 0.3s ease; /* Ajoute une transition fluide pour le changement de couleur */
+}
+#aside > ul > li:hover {
+  background: #443F3E; /* Change la couleur au survol */
+}
+#aside > ul > li.active {
+  background: #282524; /* Change la couleur lors du clic */
+}
+#aside > ul > p {
+  font-size: 20px;
+  color: #fff;
+  text-align: center;
+}
+
+#header {
+  height: 20vh;
+  width: 100%;
+  background: yellow;
+  display: flex;
+  justify-content: space-between;
+}
+
+#conversationList {
+  overflow: scroll;
+}
+#conversationList > h1 {
+  background: #ebe8e4;
+}
+#conversationList > ul > li {
+  border-bottom: 2px solid black;
+  display: grid;
+  grid-template-columns: 20% 80%;
+}
+#conversationList > ul > li > #info {
+  padding-top: 10px;
+  padding-left: 10px;
+}
+#conversationList > ul > li > #info > span:nth-child(2) {
+  color: #5461ee;
+}
+#conversationList > ul > li > #message {
+  padding: 30px;
+  padding-top: 10px;
+  border-left: 2px solid black;
+  text-align: justify;
+}
+
+/*# sourceMappingURL=App.css.map */

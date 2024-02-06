@@ -23,7 +23,7 @@ export default function Aside({ joinedRooms, getMessagesByRoom }) {
             </li>
           ))
         ) : (
-          <li>Pas de salon</li>
+          <p>Pas de salon</p>
         )}
       </ul>
     </aside>

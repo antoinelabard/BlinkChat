@@ -1,21 +1,23 @@
 #aside {
     height: 80vh;
-    background-color: #45413f;
+    background-color: #625B59;
+    border-right: 2px solid black;
 
+    
 
     &>h2 {
         font-size: 30px;
         text-align: center;
         background-color: #be6944;
         border: 2px solid black;
-        border-bottom: 2px solid #635C59;
+        border-right: none;
     }
     &>ul {
         &>li {
             display: flex;
             padding-left: 15px;
-            border-bottom: 2px solid #635C59;
-            background: #373737;
+            border-bottom: 2px solid #BBADA8;
+            background: #625B59;
             height: 50px;
             align-items: center;
             color: #fff;
@@ -23,18 +25,17 @@
             transition: background 0.3s ease; /* Ajoute une transition fluide pour le changement de couleur */
 
             &:hover {
-                background: #5461ee; /* Change la couleur au survol */
+                background: #443F3E; /* Change la couleur au survol */
             }
 
             &.active {
-                background: #ff5733; /* Change la couleur lors du clic */
+                background: #282524; /* Change la couleur lors du clic */
             }
-
-            a& {
-                text-decoration: none;
-                color: inherit;
-                cursor: pointer;
-            }
+        }
+        &>p {
+            font-size: 20px;
+            color: #fff;
+            text-align: center;
         }
     }
 }
