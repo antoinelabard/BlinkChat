@@ -1,5 +1,7 @@
 #mainBody {
     height: 100vh;
+    display: grid;
+    grid-template-rows: 20% 80%;
 
     &> section {
         display: grid;

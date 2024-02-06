@@ -12,13 +12,19 @@ export default function ConversationList({ messages, activeRoom }) {
 
   return (
     <div id="conversationList" ref={conversationListRef}>
-      <h1>Liste des messages du salon : {activeRoom}</h1>
+      {/* <h1>Liste des messages du salon : {activeRoom}</h1> */}
       <ul>
         {messages.length ? (
           messages.map(
             (message, index) => (
               <li key={index}>
-                {message[0]}, {message[1]}, {message[2]}
+                <div id="info">
+                  <span>{message[1]}<br/></span>
+                  <span>{message[2]}</span>
+                </div>
+                <div id="message">
+                  <p>{message[0]}</p>
+                </div>
               </li>
             )
           )

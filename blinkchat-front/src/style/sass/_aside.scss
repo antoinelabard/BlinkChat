@@ -1,4 +1,20 @@
 #aside {
     height: 80vh;
-    background-color: #2C3E50;
+    background-color: #45413f;
+
+
+    &>h2 {
+        font-size: 30px;
+        text-align: center;
+        background-color: #be6944;
+        border: 1px solid black;
+        border-bottom: 2px solid #635C59;
+    }
+    &>ul {
+        &>li {
+            padding-left: 15px;
+            border-bottom: 2px solid #635C59;
+            background: #373737;
+        }
+    }
 }
