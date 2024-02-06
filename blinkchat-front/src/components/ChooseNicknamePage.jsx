@@ -1,18 +1,14 @@
 import { PiPlugsBold } from "react-icons/pi";
 import { PiPlugsConnectedBold } from "react-icons/pi";
 
-export default function ChooseNicknameForm({
-  isConnected,
-  errorNickname,
-  chooseName,
-}) {
+export default function ChooseNicknameForm({isConnected,errorNickname,chooseName,}) {
   return (
     <div id="form-container">
-      {errorNickname && <p id="error-message">Nickname not available</p>}
+      <div id="topForm">
+        {isConnected ? <PiPlugsConnectedBold /> : <PiPlugsBold />}
+        {errorNickname && <p id="error-message">Nickname not available</p>}
+      </div>
       <div id="chooseNickname">
-        <div id="icon-container">
-          {isConnected ? <PiPlugsConnectedBold /> : <PiPlugsBold />}
-        </div>
         <form onSubmit={(e) => {
             e.preventDefault();
             chooseName(e.target[0].value);
