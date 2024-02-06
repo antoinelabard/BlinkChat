@@ -27,7 +27,7 @@ function App() {
   // seulement pour la 1ere page
 
   // affiche un message d'erreur sur la page principle
-  const [errorCommand, setErrorCommand] = useState(false);
+  // const [errorCommand, setErrorCommand] = useState(false);
   // definit quel composant occupe l'espace central
   const [activeTab, setActiveTab] = useState(null);
 
@@ -61,8 +61,10 @@ function App() {
       } else if (message.startsWith("/create")) {
         if (args.length === 2) {
           socket.emit("create room", args[1], nickname);
+        } else if (args.length === 1) {
+          toast("Indiquer un nom de room après /create", 16);
         } else {
-          setErrorCommand(true);
+          toast("Un seul mot après /create", 16);
         }
       } else if (message === "/commands") {
         setActiveTab("commands");
@@ -79,7 +81,7 @@ function App() {
         console.log("give me all users");
         socket.emit("give me all users", activeRoom);
       } else {
-        setErrorCommand(true);
+        toast("Cette commande n'existe pas", 19);
       }
 
       // console.log("provide a nickname");
@@ -127,14 +129,12 @@ function App() {
       toast.success("Tu t'appelles desormais " + name, { toastId: 13 });
     }
     function onChangeNameNotOk() {
-      setErrorCommand(true);
       toast.error("Ce pseudo ne convient pas", { toastId: 14 });
     }
     function onChooseNameNotOk() {
       toast.error("Ce pseudo ne convient pas", { toastId: 15 });
     }
     function OnError() {
-      setErrorCommand(true);
       toast.error("Cette commande n'existe pas", { toastId: 16 });
     }
     function onMessages(messages, roomName) {
@@ -180,11 +180,7 @@ function App() {
       <ToastContainer />
       {nickname ? (
         <>
-          <Header
-            activeRoom={activeRoom}
-            userName={nickname}
-            errorCommand={errorCommand}
-          />
+          <Header activeRoom={activeRoom} userName={nickname} />
           <section
             style={{
               display: "grid",
@@ -201,7 +197,6 @@ function App() {
             <Main
               publishMessage={publishMessage}
               rooms={rooms}
-              setErrorCommand={setErrorCommand}
               activeTab={activeTab}
               messages={messages}
               users={users}

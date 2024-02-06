@@ -324,6 +324,9 @@ io.on("connection", (socket) => {
           }
         }
       });
+    repository.logout(username).then((res) => {
+      console.log(res);
+    });
     console.log(socketsList.length);
     console.log("user disconnected");
   });
