@@ -53,7 +53,6 @@ table {
 }
 
 #mainPage {
-  height: 80vh;
   background-color: #ebe8e4;
   display: grid;
   grid-template-rows: 90% 10%;
@@ -89,12 +88,11 @@ table {
 #mainBody {
   height: 100vh;
   display: grid;
-  grid-template-rows: 20% 80%;
+  grid-template-rows: 10% 90%;
 }
 #mainBody > section {
   display: grid;
   grid-template-columns: 1fr 5fr;
-  height: 80vh;
   width: 100%;
 }
 
@@ -137,11 +135,30 @@ table {
 }
 
 #header {
-  height: 20vh;
   width: 100%;
-  background: yellow;
+  background: #B0ADAA;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+#header > div:first-child {
+  flex-grow: 1;
+}
+
+h1 {
+  font-size: 80px;
+}
+
+#header > div:last-child {
+  text-align: right;
+}
+
+#header > div:last-child > div {
+  color: red;
+  font-weight: bold;
+  margin-right: 10px;
 }
 
 #conversationList {
