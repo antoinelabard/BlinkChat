@@ -1,7 +1,7 @@
 // import { useState } from "react";
 // import { socket } from "../socket";
 
-export default function Message({ publishMessage }) {
+export default function Message({ publishMessage, activeRoom }) {
   // const [message, setMessage] = useState("");
 
   // const handleChange = (e) => {
@@ -14,7 +14,7 @@ export default function Message({ publishMessage }) {
 
     const newMessage = e.target[0].value;
     document.getElementById("input").value = "";
-    publishMessage(newMessage);
+    publishMessage(newMessage, activeRoom);
   };
 
   return (

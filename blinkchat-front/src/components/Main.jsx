@@ -24,7 +24,7 @@ export default function Main({
         <ConversationList messages={messages} activeRoom={activeRoom} />
       ) : null}
 
-      <Message publishMessage={publishMessage} />
+      <Message publishMessage={publishMessage} activeRoom={activeRoom} />
     </main>
   );
 }

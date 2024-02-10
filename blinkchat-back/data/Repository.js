@@ -461,7 +461,7 @@ class Repository {
    */
   async getMessagesByChannel(channelName) {
     return await Channel.findOne({ name: channelName }).then((channel) => {
-      console.log(channel);
+      // console.log(channel);
       if (!channel) {
         return new Message({
           text: `Channel ${channelName} does not exist.`,

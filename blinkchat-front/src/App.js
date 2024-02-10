@@ -48,7 +48,7 @@ function App() {
     socket.emit("get all rooms");
   }
 
-  function publishMessage(message) {
+  function publishMessage(message, activeRoom) {
     let args = message.split(" ");
 
     if (message[0] === "/") {
@@ -86,6 +86,9 @@ function App() {
 
       // console.log("provide a nickname");
     } else {
+      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      console.log(activeRoom);
+      console.log(typeof activeRoom);
       socket.emit("publish message", message, activeRoom, nickname);
     }
   }
@@ -137,19 +140,61 @@ function App() {
     function OnError() {
       toast.error("Cette commande n'existe pas", { toastId: 16 });
     }
-    function onMessages(messages, roomName) {
+    function onMessages(messages, roomName, bool) {
       // console.log("socket de message recu");
       // console.log(messages);
+      // console.log("type: " + bool);
+      // console.log("€€€€€€€€€€€€€€€€€€€€€€€€");
       // console.log(roomName);
       // console.log(activeRoom);
-      // console.log(roomName === activeRoom || activeRoom === null);
-      if (roomName === activeRoom || activeRoom === null) {
-        // console.log("nouvelle liste de message en provenance de " + roomName);
+      // console.log(roomName === activeRoom);
+
+      // console.log("nouvelle liste de message en provenance de " + roomName);
+      // console.log("je suis actuellement dans le salon " + activeRoom);
+      // console.log(
+      //   "condition:  " + (bool === "update" && roomName === activeRoom)
+      // );
+      // console.log("bool : " + bool);
+      // console.log(bool);
+      // console.log(typeof roomName);
+      // console.log(typeof activeRoom);
+      console.log("socket de message recu");
+      console.log("active room: " + activeRoom);
+      console.log("type: " + bool);
+      if (
+        bool === "update" &&
+        activeRoom === roomName &&
+        activeRoom !== undefined &&
+        activeRoom !== null
+      ) {
+        console.log("UPDATE #####");
+        setActiveRoom(roomName);
         setMessages(messages);
         setActiveTab("messages");
+      } else if (bool === "get" && activeRoom !== undefined) {
+        console.log("GET #####");
+        console.log(roomName);
         setActiveRoom(roomName);
+        setMessages(messages);
+        setActiveTab("messages");
       }
     }
+    // function onUpdateMessages(messages, roomName) {
+    //   // console.log("socket de message recu");
+    //   // console.log(messages);
+    //   console.log("€€€€€€€€€€€€€€€€€€€€€€€€");
+    //   console.log(roomName);
+    //   console.log("room actuelle" + activeRoom);
+    //   console.log(roomName === activeRoom);
+
+    //   if (roomName === activeRoom) {
+    //     console.log("nouvelle liste de message en provenance de " + roomName);
+    //     console.log("je suis actuellement dans le salon " + activeRoom);
+    //     setMessages(messages);
+    //     setActiveTab("messages");
+    //     setActiveRoom(roomName);
+    //   }
+    // }
     function onJoinedRoom(channels) {
       setJoinedRooms(() => channels);
     }
@@ -171,8 +216,23 @@ function App() {
     socket.on("pop up", onPopUp);
     socket.on("joined rooms", onJoinedRoom);
     socket.on("display messages", onMessages);
+    // socket.on("update messages", onUpdateMessages);
+    return () => {
+      socket.off("nickname ok", onChangeNameOk);
+      socket.off("nickname not allow", onChangeNameNotOk);
+      socket.off("choose another nickname", onChooseNameNotOk);
+      socket.off("connected", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off("rooms", onGetRooms);
+      socket.off("error", OnError);
+      socket.off("users", onUsers);
+      socket.off("pop up", onPopUp);
+      socket.off("joined rooms", onJoinedRoom);
+      socket.off("display messages", onMessages);
+    };
+
     // socket.on("joined rooms", (value) => onJoinRoom(value));
-  }, [rooms]);
+  }, [messages, activeRoom]);
 
   return (
     <>
@@ -190,8 +250,6 @@ function App() {
           >
             <Aside
               joinedRooms={joinedRooms}
-              setActiveRoom={setActiveRoom}
-              setActiveTab={setActiveTab}
               getMessagesByRoom={getMessagesByRoom}
             />
             <Main
