@@ -23,6 +23,7 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [users, setUsers] = useState([]);
   const [rooms, setRooms] = useState([""]);
+  const [newMessageCount, setNewMessageCount] = useState([]);
 
   // seulement pour la 1ere page
 
@@ -141,26 +142,6 @@ function App() {
       toast.error("Cette commande n'existe pas", { toastId: 16 });
     }
     function onMessages(messages, roomName, bool) {
-      // console.log("socket de message recu");
-      // console.log(messages);
-      // console.log("type: " + bool);
-      // console.log("€€€€€€€€€€€€€€€€€€€€€€€€");
-      // console.log(roomName);
-      // console.log(activeRoom);
-      // console.log(roomName === activeRoom);
-
-      // console.log("nouvelle liste de message en provenance de " + roomName);
-      // console.log("je suis actuellement dans le salon " + activeRoom);
-      // console.log(
-      //   "condition:  " + (bool === "update" && roomName === activeRoom)
-      // );
-      // console.log("bool : " + bool);
-      // console.log(bool);
-      // console.log(typeof roomName);
-      // console.log(typeof activeRoom);
-      console.log("socket de message recu");
-      console.log("active room: " + activeRoom);
-      console.log("type: " + bool);
       if (
         bool === "update" &&
         activeRoom === roomName &&
@@ -173,10 +154,33 @@ function App() {
         setActiveTab("messages");
       } else if (bool === "get" && activeRoom !== undefined) {
         console.log("GET #####");
-        console.log(roomName);
+
+        const updatedNewMessageCount = [...newMessageCount];
+        for (let i = 0; i < joinedRooms.length; i++) {
+          if (joinedRooms[i].name === roomName) {
+            updatedNewMessageCount[i] = 0;
+            setNewMessageCount(updatedNewMessageCount);
+          }
+        }
+
         setActiveRoom(roomName);
         setMessages(messages);
         setActiveTab("messages");
+      } else if (bool === "update" && activeRoom !== roomName) {
+        console.log("un nouveau message en attente a stocké");
+        const updatedNewMessageCount = [...newMessageCount];
+
+        for (let i = 0; i < joinedRooms.length; i++) {
+          // console.log(joinedRooms[i].name);
+          if (joinedRooms[i].name === roomName) {
+            let truc = newMessageCount;
+            updatedNewMessageCount[i] += 1;
+
+            // console.log("update newMessage");
+            setNewMessageCount(updatedNewMessageCount);
+            console.log(newMessageCount);
+          }
+        }
       }
     }
     // function onUpdateMessages(messages, roomName) {
@@ -195,8 +199,26 @@ function App() {
     //     setActiveRoom(roomName);
     //   }
     // }
-    function onJoinedRoom(channels) {
-      setJoinedRooms(() => channels);
+    function onJoinedRoom(channels, type, roomName) {
+      // console.log(channels);
+      console.log("newjoined rrom");
+      console.log(joinedRooms.length + "type: " + type);
+      if (joinedRooms.length === 0) {
+        let truc = [];
+        for (let i = 0; i < channels.length; i++) {
+          truc.push(0);
+        }
+        setNewMessageCount(truc);
+        console.log(truc);
+      } else if (type === "delete") {
+        console.log("une roome en moisn qui s'appel: " + roomName);
+      } else if (type === "add") {
+        let truc = newMessageCount;
+        truc.push(0);
+        setNewMessageCount(truc);
+        console.log("une roome en plus qui s'appel: " + roomName);
+      }
+      setJoinedRooms(channels);
     }
     function onPopUp(roomName, user, message) {
       if (user !== nickname) {
@@ -232,7 +254,7 @@ function App() {
     };
 
     // socket.on("joined rooms", (value) => onJoinRoom(value));
-  }, [messages, activeRoom]);
+  }, [messages, activeRoom, joinedRooms, nickname, newMessageCount]);
 
   return (
     <>
@@ -251,6 +273,7 @@ function App() {
             <Aside
               joinedRooms={joinedRooms}
               getMessagesByRoom={getMessagesByRoom}
+              newMessageCount={newMessageCount}
             />
             <Main
               publishMessage={publishMessage}

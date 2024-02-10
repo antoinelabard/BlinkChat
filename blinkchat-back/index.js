@@ -114,7 +114,7 @@ io.on("connection", (socket) => {
                 socket.emit("error");
               } else {
                 // console.log(joinedRooms);
-                socket.emit("joined rooms", joinedRooms);
+                socket.emit("joined rooms", joinedRooms, "delete", roomName);
                 emitPopUpToAllUSersOfTheRoom(
                   roomName,
                   nickname,
@@ -138,8 +138,7 @@ io.on("connection", (socket) => {
             if (joinedRooms.commandResult === "error") {
               socket.emit("error");
             } else {
-              // console.log(joinedRooms);
-              socket.emit("joined rooms", joinedRooms);
+              socket.emit("joined rooms", joinedRooms, "add", roomName);
               emitPopUpToAllUSersOfTheRoom(
                 roomName,
                 nickname,
@@ -208,7 +207,7 @@ io.on("connection", (socket) => {
                 socket.emit("error");
               } else {
                 // console.log(joinedRooms);
-                socket.emit("joined rooms", joinedRooms);
+                socket.emit("joined rooms", joinedRooms, "add", roomName);
               }
             });
         });
@@ -239,7 +238,7 @@ io.on("connection", (socket) => {
                 socket.emit("error");
               } else {
                 console.log(joinedRooms);
-                socket.emit("joined rooms", joinedRooms);
+                socket.emit("joined rooms", joinedRooms, "delete", roomName);
               }
             });
         });
