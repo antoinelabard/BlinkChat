@@ -4,5 +4,5 @@ const userSchema = mongoose.Schema({
     username: { type: String, required: true, unique: true },
 })
 
-const Channel = mongoose.model('User', userSchema)
-export default Channel
+const User = mongoose.model('User', userSchema)
+export default User
