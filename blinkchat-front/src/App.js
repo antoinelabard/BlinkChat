@@ -70,7 +70,7 @@ function App() {
       } else if (message === "/commands") {
         setActiveTab("commands");
       } else if (message.startsWith("/delete") && args.length === 2) {
-        console.log("socket de delete envoyé");
+        // console.log("socket de delete envoyé");
         socket.emit("delete room", args[1]);
       } else if (message.startsWith("/join") && args.length === 2) {
         socket.emit("join room", args[1], nickname);
@@ -127,6 +127,7 @@ function App() {
     function onGetRooms(rooms) {
       setRooms(() => rooms);
       setActiveTab("rooms");
+      setActiveRoom(null);
     }
     function onChangeNameOk(name) {
       setNickname(name);
@@ -201,17 +202,31 @@ function App() {
     // }
     function onJoinedRoom(channels, type, roomName) {
       // console.log(channels);
-      console.log("newjoined rrom");
-      console.log(joinedRooms.length + "type: " + type);
+      // console.log("newjoined rrom");
+      // console.log(joinedRooms.length + "type: " + type);
       if (joinedRooms.length === 0) {
         let truc = [];
         for (let i = 0; i < channels.length; i++) {
           truc.push(0);
         }
         setNewMessageCount(truc);
-        console.log(truc);
+        // console.log(truc);
       } else if (type === "delete") {
         console.log("une roome en moisn qui s'appel: " + roomName);
+        console.log(channels);
+        if (channels.length === 0) {
+          setNewMessageCount([]);
+        } else {
+          for (let i = 0; i < joinedRooms.length; i++) {
+            if (joinedRooms[i].name === roomName) {
+              let truc = [...newMessageCount];
+              console.log(truc.splice(i, 1));
+
+              console.log(truc);
+              setNewMessageCount(truc);
+            }
+          }
+        }
       } else if (type === "add") {
         let truc = newMessageCount;
         truc.push(0);
@@ -219,6 +234,7 @@ function App() {
         console.log("une roome en plus qui s'appel: " + roomName);
       }
       setJoinedRooms(channels);
+      console.log(newMessageCount);
     }
     function onPopUp(roomName, user, message) {
       if (user !== nickname) {

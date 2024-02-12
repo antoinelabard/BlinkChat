@@ -56,6 +56,30 @@ function emitMessagesToAllUSers(messagesTab, roomName) {
     }
   });
 }
+function emitDeleteRoomToAllUser() {
+  repository.getChannelByName(roomName).then((channel) => {
+    for (let i = 0; i < socketsList.length; i++) {
+      for (let j = 0; j < channel.users.length; j++) {
+        // console.log(socketsList[i].name);
+        // console.log(channel.users[j]);
+        if (socketsList[i].name === channel.users[j]) {
+          console.log(socketsList.length + " personnes connectées");
+          console.log("message envoyé a " + socketsList[i].name);
+          console.log(roomName);
+
+          let bool = "update";
+          socketsList[i].socket.emit(
+            "display messages",
+            messagesTab,
+            roomName,
+            bool
+          );
+          // socket.emit("display messages", res, roomName, "get");
+        }
+      }
+    }
+  });
+}
 function emitPopUpToAllUSersOfTheRoom(roomName, senderNickname, message) {
   // console.log(message + activeRoom + nickname);
   // console.log(message);
@@ -65,7 +89,7 @@ function emitPopUpToAllUSersOfTheRoom(roomName, senderNickname, message) {
         // console.log(socketsList[i].name + " " + channel.users[j]);
         // console.log(socketsList[i].name === channel.users[j]);
         if (socketsList[i].name === channel.users[j]) {
-          console.log("pop up envoyé a " + socketsList[i].name);
+          // console.log("pop up envoyé a " + socketsList[i].name);
 
           socketsList[i].socket.emit(
             "pop up",
@@ -113,7 +137,7 @@ io.on("connection", (socket) => {
               if (joinedRooms.commandResult === "error") {
                 socket.emit("error");
               } else {
-                // console.log(joinedRooms);
+                console.log(joinedRooms);
                 socket.emit("joined rooms", joinedRooms, "delete", roomName);
                 emitPopUpToAllUSersOfTheRoom(
                   roomName,
@@ -226,21 +250,55 @@ io.on("connection", (socket) => {
     // gerer lidentité avec des cookies ?
   });
   socket.on("delete room", (roomName) => {
-    console.log("deleting room " + roomName);
+    let users;
+    let machin = repository.getChannelByName(roomName).then((truc) => {
+      try {
+        users = truc.users;
+      } catch (e) {
+        console.log("error");
+      }
+      console.log("no room provided for delete");
+    });
+
     let truc = repository.deleteChannel(roomName).then((truc) => {
       if (truc.commandResult === "success") {
         let truc = repository.getChannels().then((truc) => {
           socket.emit("rooms", truc);
-          let joinedRooms = repository
-            .getUserSubscribedChannels(roomName)
-            .then((joinedRooms) => {
-              if (joinedRooms.commandResult === "error") {
-                socket.emit("error");
-              } else {
-                console.log(joinedRooms);
-                socket.emit("joined rooms", joinedRooms, "delete", roomName);
+
+          for (let i = 0; i < socketsList.length; i++) {
+            for (let j = 0; j < users.length; j++) {
+              // console.log(socketsList[i].name);
+              // console.log(channel.users[j]);
+              if (socketsList[i].name === users[j]) {
+                console.log(socketsList.length + " personnes connectées");
+                console.log("message envoyé a " + socketsList[i].name);
+
+                repository
+                  .getUserSubscribedChannels(users[j])
+                  .then((joinedRooms) => {
+                    if (joinedRooms.commandResult === "error") {
+                      socket.emit("error");
+                    } else {
+                      console.log(joinedRooms);
+                      socketsList[i].socket.emit(
+                        "joined rooms",
+                        joinedRooms,
+                        "delete",
+                        roomName
+                      );
+                      repository.getChannels().then((truc) => {
+                        socketsList[i].socket.emit("rooms", truc);
+                      });
+                      // emitPopUpToAllUSersOfTheRoom(
+                      //   roomName,
+                      //   nickname,
+                      //   `${nickname} a supprimer le salon ${roomName}`
+                      // );
+                    }
+                  });
               }
-            });
+            }
+          }
         });
       } else {
         socket.emit("error");

@@ -15,7 +15,7 @@ export default function Aside({
   getMessagesByRoom,
   newMessageCount,
 }) {
-  console.log("nouveau render de aside ");
+  // console.log("nouveau render de aside ");
   useEffect(() => {
     console.log("newMessageCount updated:", newMessageCount);
     // You can perform additional logic here if needed
