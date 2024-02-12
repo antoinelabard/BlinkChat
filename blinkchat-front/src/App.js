@@ -213,6 +213,7 @@ function App() {
         // console.log(truc);
       } else if (type === "delete") {
         console.log("une roome en moisn qui s'appel: " + roomName);
+        toast("une room supprimée", { toastId: "532" });
         console.log(channels);
         if (channels.length === 0) {
           setNewMessageCount([]);

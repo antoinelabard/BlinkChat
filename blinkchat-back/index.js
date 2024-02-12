@@ -257,51 +257,49 @@ io.on("connection", (socket) => {
       } catch (e) {
         console.log("error");
       }
-      console.log("no room provided for delete");
-    });
+      if (users === null) {
+        socket.emit("error");
+      } else {
+        let truc = repository.deleteChannel(roomName).then((truc) => {
+          if (truc.commandResult === "success") {
+            let truc = repository.getChannels().then((truc) => {
+              socket.emit("rooms", truc);
 
-    let truc = repository.deleteChannel(roomName).then((truc) => {
-      if (truc.commandResult === "success") {
-        let truc = repository.getChannels().then((truc) => {
-          socket.emit("rooms", truc);
+              for (let i = 0; i < socketsList.length; i++) {
+                for (let j = 0; j < users.length; j++) {
+                  // /pour chaque personne du salon on recup la socket associée
+                  // console.log(socketsList[i].name);
+                  // console.log(channel.users[j]);
+                  if (socketsList[i].name === users[j]) {
+                    console.log(socketsList.length + " personnes connectées");
+                    console.log("message envoyé a " + socketsList[i].name);
 
-          for (let i = 0; i < socketsList.length; i++) {
-            for (let j = 0; j < users.length; j++) {
-              // console.log(socketsList[i].name);
-              // console.log(channel.users[j]);
-              if (socketsList[i].name === users[j]) {
-                console.log(socketsList.length + " personnes connectées");
-                console.log("message envoyé a " + socketsList[i].name);
-
-                repository
-                  .getUserSubscribedChannels(users[j])
-                  .then((joinedRooms) => {
-                    if (joinedRooms.commandResult === "error") {
-                      socket.emit("error");
-                    } else {
-                      console.log(joinedRooms);
-                      socketsList[i].socket.emit(
-                        "joined rooms",
-                        joinedRooms,
-                        "delete",
-                        roomName
-                      );
-                      repository.getChannels().then((truc) => {
-                        socketsList[i].socket.emit("rooms", truc);
+                    repository
+                      .getUserSubscribedChannels(users[j])
+                      .then((joinedRooms) => {
+                        if (joinedRooms.commandResult === "error") {
+                          socket.emit("error");
+                        } else {
+                          console.log(joinedRooms);
+                          socketsList[i].socket.emit(
+                            "joined rooms",
+                            joinedRooms,
+                            "delete",
+                            roomName
+                          );
+                          repository.getChannels().then((truc) => {
+                            socketsList[i].socket.emit("rooms", truc);
+                          });
+                        }
                       });
-                      // emitPopUpToAllUSersOfTheRoom(
-                      //   roomName,
-                      //   nickname,
-                      //   `${nickname} a supprimer le salon ${roomName}`
-                      // );
-                    }
-                  });
+                  }
+                }
               }
-            }
+            });
+          } else {
+            socket.emit("error");
           }
         });
-      } else {
-        socket.emit("error");
       }
     });
   });
