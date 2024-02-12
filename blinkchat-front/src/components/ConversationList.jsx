@@ -1,5 +1,6 @@
 export default function ConversationList({ messages, activeRoom }) {
-  console.log(messages);
+  // console.log(messages);
+
   return (
     <>
       <h1>Liste des messages du salon : {activeRoom}</h1>
