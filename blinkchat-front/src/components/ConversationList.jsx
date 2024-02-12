@@ -12,7 +12,6 @@ export default function ConversationList({ messages, activeRoom }) {
 
   return (
     <div id="conversationList" ref={conversationListRef}>
-      {/* <h1>Liste des messages du salon : {activeRoom}</h1> */}
       <ul>
         {messages.length ? (
           messages.map(

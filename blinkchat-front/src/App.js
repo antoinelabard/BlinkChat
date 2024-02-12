@@ -1,12 +1,14 @@
 import "./App.css";
 import { socket } from "./socket";
 import React, { useState, useEffect } from "react";
-// import Channel from "../../blinkchat-back/models/channel";
 import Aside from "./components/Aside";
 import Header from "./components/Header";
 import Main from "./components/Main";
 import ChooseNicknameForm from "./components/ChooseNicknamePage";
-import PopUp from "./components/PopUp";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { PiPlugsBold } from "react-icons/pi";
+import { PiPlugsConnectedBold } from "react-icons/pi";
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -21,34 +23,12 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [users, setUsers] = useState([]);
   const [rooms, setRooms] = useState([""]);
+  const [newMessageCount, setNewMessageCount] = useState([]);
 
-  // seulement pour la 1ere page
-  const [errorNickname, setErrorNickname] = useState(false);
-
-  // affiche un messgae derreur sur la page principle
-  const [errorCommand, setErrorCommand] = useState(false);
-  // definie quel composant occupe l'espace central
+  // affiche un message d'erreur sur la page principale
+  // definit quel composant occupe l'espace central
   const [activeTab, setActiveTab] = useState(null);
 
-  const [popUpVisible, setPopUpVisible] = useState(false);
-  const [popUpMessage, setPopUpMessage] = useState("");
-
-  //a delete
-
-  // function createRoom(room) {
-  //   socket.emit("create room", room);
-  // }
-  function popUpDisplay(roomName, nickname) {
-    setPopUpVisible(true);
-    setPopUpMessage(nickname + "à rejoint le salon " + roomName);
-    const timer = setTimeout(() => {
-      setPopUpVisible(false);
-    }, 5000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }
   function getMessagesByRoom(room) {
     socket.emit("get messages", room);
   }
@@ -56,10 +36,6 @@ function App() {
   function chooseName(name) {
     socket.emit("choose name", name);
   }
-
-  // function deleteRoom(room) {
-  //   socket.emit("delete room", room);
-  // }
 
   function changeName(nickname) {
     console.log("demande de changement de nickn,ame");
@@ -70,11 +46,7 @@ function App() {
     socket.emit("get all rooms");
   }
 
-  // function getUsers(room) {
-  //   setActiveTab(() => "users");
-  // }
-
-  function publishMessage(message) {
+  function publishMessage(message, activeRoom) {
     let args = message.split(" ");
 
     if (message[0] === "/") {
@@ -87,8 +59,10 @@ function App() {
       } else if (message.startsWith("/create")) {
         if (args.length === 2) {
           socket.emit("create room", args[1], nickname);
+        } else if (args.length === 1) {
+          toast("Indiquer un nom de room après /create", 16);
         } else {
-          setErrorCommand(true);
+          toast("Un seul mot après /create", 16);
         }
       } else if (message === "/commands") {
         setActiveTab("commands");
@@ -105,7 +79,7 @@ function App() {
         console.log("give me all users");
         socket.emit("give me all users", activeRoom);
       } else {
-        setErrorCommand(true);
+        toast("Cette commande n'existe pas", 19);
       }
 
       // console.log("provide a nickname");
@@ -113,97 +87,122 @@ function App() {
       socket.emit("publish message", message, activeRoom, nickname);
     }
   }
-
-  //   case "/list":
-  //     // exemple "/list truc"
-  //     if (message.split("").length > 1) {
-  //     } else {
-  //       console.log("list!");
-  //       getRooms();
-  //     }
-
-  //     break;
-
-  //   case "/users":
-  //     console.log("users!");
-  //     setActiveTab(() => "users");
-  //     break;
-
-  //   case "/create":
-  //     console.log("create room!");
-  //     createRoom(message.substring(9));
-  //     break;
-
-  //   case "/delete":
-  //     console.log("delete room");
-  //     deleteRoom(rooms);
-  //     break;
-
-  //   case "/join":
-  //     console.log("join room!");
-  //     joinRoom(rooms);
-  //     break;
-
-  //   case "/quit":
-  //     console.log("quit room!");
-  //     //aucune idée a revoir
-  //     break;
-  // }
-  // function deleteMessage(message) {
-  //   socket.emit("delete message", message);
-  // }
+  //////////////////////////////////////////////////////////////
 
   useEffect(() => {
     function onConnect() {
-      setIsConnected(true);
+      setIsConnected(() => true);
     }
 
     function onDisconnect() {
       setIsConnected(() => false);
     }
+
     function onUsers(users) {
       setUsers(users);
       setActiveTab("users");
     }
 
     function onGetRooms(rooms) {
-      console.log("socket rooms recu");
-      console.log(rooms);
       setRooms(() => rooms);
       setActiveTab("rooms");
+      setActiveRoom(null);
     }
     function onChangeNameOk(name) {
-      console.log("bravo tu a choisis le pseudo " + name);
       setNickname(name);
+      toast.success("Tu t'appelles desormais " + name, { toastId: 13 });
     }
     function onChangeNameNotOk() {
-      setErrorCommand(true);
+      toast.error("Ce pseudo ne convient pas", { toastId: 14 });
     }
     function onChooseNameNotOk() {
-      setErrorNickname(true);
+      toast.error("Ce pseudo ne convient pas", { toastId: 15 });
     }
     function OnError() {
-      setErrorCommand(true);
+      toast.error("Cette commande n'existe pas", { toastId: 16 });
     }
-    function onMessages(messages, roomName) {
-      console.log("socket de message recu");
-      console.log(messages);
-      console.log(roomName);
-      console.log(activeRoom);
-      console.log(roomName === activeRoom || activeRoom === null);
-      if (roomName === activeRoom || activeRoom === null) {
-        console.log("nouvelle liste de message en provenance de " + roomName);
-        setMessages(messages);
-
-        setActiveTab("messages");
+    function onMessages(messages, roomName, bool) {
+      if (
+        bool === "update" &&
+        activeRoom === roomName &&
+        activeRoom !== undefined &&
+        activeRoom !== null
+      ) {
+        console.log("UPDATE #####");
         setActiveRoom(roomName);
+        setMessages(messages);
+        setActiveTab("messages");
+      } else if (bool === "get" && activeRoom !== undefined) {
+        console.log("GET #####");
+
+        const updatedNewMessageCount = [...newMessageCount];
+        for (let i = 0; i < joinedRooms.length; i++) {
+          if (joinedRooms[i].name === roomName) {
+            updatedNewMessageCount[i] = 0;
+            setNewMessageCount(updatedNewMessageCount);
+          }
+        }
+
+        setActiveRoom(roomName);
+        setMessages(messages);
+        setActiveTab("messages");
+      } else if (bool === "update" && activeRoom !== roomName) {
+        console.log("un nouveau message en attente a stocké");
+        const updatedNewMessageCount = [...newMessageCount];
+
+        for (let i = 0; i < joinedRooms.length; i++) {
+          // console.log(joinedRooms[i].name);
+          if (joinedRooms[i].name === roomName) {
+            let truc = newMessageCount;
+            updatedNewMessageCount[i] += 1;
+
+            // console.log("update newMessage");
+            setNewMessageCount(updatedNewMessageCount);
+            console.log(newMessageCount);
+          }
+        }
       }
     }
-    function onJoinedRoom(channels) {
-      setJoinedRooms(() => channels);
+    function onJoinedRoom(channels, type, roomName) {
+      if (joinedRooms.length === 0) {
+        let truc = [];
+        for (let i = 0; i < channels.length; i++) {
+          truc.push(0);
+        }
+        setNewMessageCount(truc);
+        // console.log(truc);
+      } else if (type === "delete") {
+        console.log("une roome en moisn qui s'appel: " + roomName);
+        toast("une room supprimée", { toastId: "532" });
+        console.log(channels);
+        if (channels.length === 0) {
+          setNewMessageCount([]);
+        } else {
+          for (let i = 0; i < joinedRooms.length; i++) {
+            if (joinedRooms[i].name === roomName) {
+              let truc = [...newMessageCount];
+              console.log(truc.splice(i, 1));
+
+              console.log(truc);
+              setNewMessageCount(truc);
+            }
+          }
+        }
+      } else if (type === "add") {
+        let truc = newMessageCount;
+        truc.push(0);
+        setNewMessageCount(truc);
+        console.log("une roome en plus qui s'appel: " + roomName);
+      }
+      setJoinedRooms(channels);
+      console.log(newMessageCount);
     }
-    function onPopUp(roomName, nickname) {
-      popUpDisplay(roomName, nickname);
+    function onPopUp(roomName, user, message) {
+      if (user !== nickname) {
+        toast(message, { toastId: message });
+      } else {
+        toast("Vous avez rejoint le salon " + roomName, { toastId: message });
+      }
     }
     socket.on("nickname ok", onChangeNameOk);
     socket.on("nickname not allow", onChangeNameNotOk);
@@ -213,36 +212,44 @@ function App() {
     socket.on("rooms", onGetRooms);
     socket.on("error", OnError);
     socket.on("users", onUsers);
-    socket.on("pop up new user", onPopUp);
+    socket.on("pop up", onPopUp);
     socket.on("joined rooms", onJoinedRoom);
-    // socket.on("joined rooms", (value) => onJoinRoom(value));
     socket.on("display messages", onMessages);
-  }, [rooms]);
+    // socket.on("update messages", onUpdateMessages);
+    return () => {
+      socket.off("nickname ok", onChangeNameOk);
+      socket.off("nickname not allow", onChangeNameNotOk);
+      socket.off("choose another nickname", onChooseNameNotOk);
+      socket.off("connected", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off("rooms", onGetRooms);
+      socket.off("error", OnError);
+      socket.off("users", onUsers);
+      socket.off("pop up", onPopUp);
+      socket.off("joined rooms", onJoinedRoom);
+      socket.off("display messages", onMessages);
+    };
+
+    // socket.on("joined rooms", (value) => onJoinRoom(value));
+  }, [messages, activeRoom, joinedRooms, nickname, newMessageCount]);
 
   return (
     <>
+      {isConnected ? <PiPlugsConnectedBold /> : <PiPlugsBold />}
+      <ToastContainer />
       {nickname ? (
         <>
-          {popUpVisible ? (
-            <PopUp popUpDisplay={popUpDisplay} content={popUpMessage} />
-          ) : null}
-          <body id="mainBody">
-            <Header
-              activeRoom={activeRoom}
-              userName={nickname}
-              errorCommand={errorCommand}
-            />
-            <section>
+            <body id="mainBody">
+          <Header activeRoom={activeRoom} userName={nickname} />
+          <section>
             <Aside
               joinedRooms={joinedRooms}
-              setActiveRoom={setActiveRoom}
-              setActiveTab={setActiveTab}
               getMessagesByRoom={getMessagesByRoom}
+              newMessageCount={newMessageCount}
             />
             <Main
               publishMessage={publishMessage}
               rooms={rooms}
-              setErrorCommand={setErrorCommand}
               activeTab={activeTab}
               messages={messages}
               users={users}
@@ -252,11 +259,7 @@ function App() {
           </body>
         </>
       ) : (
-        <ChooseNicknameForm
-          isConnected={isConnected}
-          errorNickname={errorNickname}
-          chooseName={chooseName}
-        />
+        <ChooseNicknameForm chooseName={chooseName} />
       )}
     </>
   );

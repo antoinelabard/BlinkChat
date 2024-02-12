@@ -1,29 +1,31 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-export default function Aside({ joinedRooms, getMessagesByRoom }) {
-  const [activeRoom, setActiveRoom] = useState(null);
-
-  const handleRoomClick = (room) => {
-    getMessagesByRoom(room.name);
-    setActiveRoom(room.name);
-  };
-
+export default function Aside({
+  joinedRooms,
+  getMessagesByRoom,
+  newMessageCount,
+}) {
+  // console.log("nouveau render de aside ");
+  useEffect(() => {
+    console.log("newMessageCount updated:", newMessageCount);
+    // You can perform additional logic here if needed
+  }, [newMessageCount]);
+  // console.log(newMessageCount);
   return (
-    <aside id="aside">
+    <aside id="aside" style={{ height: "100%", border: "5px solid green" }}>
       <h2>Rooms</h2>
       <ul>
         {joinedRooms.length ? (
-          joinedRooms.map((room) => (
-            <li 
-              key={room.name} 
-              onClick={() => handleRoomClick(room)}
-              className={activeRoom === room.name ? 'active' : ''}
-            >
+          joinedRooms.map((room, index) => (
+            <li key={room.name}>
+              <button onClick={() => getMessagesByRoom(room.name)}>
                 {room.name}
+              </button>
+              <p>{newMessageCount[index]}</p>
             </li>
           ))
         ) : (
-          <p>Pas de salon</p>
+          <li>Pas de salon</li>
         )}
       </ul>
     </aside>

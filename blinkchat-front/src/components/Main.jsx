@@ -24,10 +24,7 @@ export default function Main({
         <ConversationList messages={messages} activeRoom={activeRoom} />
       ) : null}
 
-      <Message
-        publishMessage={publishMessage}
-        setErrorCommand={setErrorCommand}
-      />
+      <Message publishMessage={publishMessage} activeRoom={activeRoom} />
     </main>
   );
 }

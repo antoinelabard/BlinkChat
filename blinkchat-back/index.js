@@ -35,30 +35,67 @@ function emitMessagesToAllUSers(messagesTab, roomName) {
   // console.log(message + activeRoom + nickname);
   repository.getChannelByName(roomName).then((channel) => {
     for (let i = 0; i < socketsList.length; i++) {
-      for (let j = i; j < channel.users.length; j++) {
+      for (let j = 0; j < channel.users.length; j++) {
+        // console.log(socketsList[i].name);
+        // console.log(channel.users[j]);
         if (socketsList[i].name === channel.users[j]) {
           console.log(socketsList.length + " personnes connectées");
           console.log("message envoyé a " + socketsList[i].name);
-          socketsList[i].socket.emit("display messages", messagesTab, roomName);
+          console.log(roomName);
+
+          let bool = "update";
+          socketsList[i].socket.emit(
+            "display messages",
+            messagesTab,
+            roomName,
+            bool
+          );
+          // socket.emit("display messages", res, roomName, "get");
         }
       }
     }
   });
 }
-function emitPopUpToAllUSersOfTheRoom(roomName, senderNickname) {
-  // console.log(message + activeRoom + nickname);
+function emitDeleteRoomToAllUser() {
   repository.getChannelByName(roomName).then((channel) => {
     for (let i = 0; i < socketsList.length; i++) {
-      for (let j = i; j < channel.users.length; j++) {
-        if (
-          socketsList[i].name === channel.users[j] &&
-          socketsList[i].name !== senderNickname
-        ) {
-          console.log("pop up envoyé a " + socketsList[i].name);
+      for (let j = 0; j < channel.users.length; j++) {
+        // console.log(socketsList[i].name);
+        // console.log(channel.users[j]);
+        if (socketsList[i].name === channel.users[j]) {
+          console.log(socketsList.length + " personnes connectées");
+          console.log("message envoyé a " + socketsList[i].name);
+          console.log(roomName);
+
+          let bool = "update";
           socketsList[i].socket.emit(
-            "pop up new user",
+            "display messages",
+            messagesTab,
             roomName,
-            senderNickname
+            bool
+          );
+          // socket.emit("display messages", res, roomName, "get");
+        }
+      }
+    }
+  });
+}
+function emitPopUpToAllUSersOfTheRoom(roomName, senderNickname, message) {
+  // console.log(message + activeRoom + nickname);
+  // console.log(message);
+  repository.getChannelByName(roomName).then((channel) => {
+    for (let i = 0; i < socketsList.length; i++) {
+      for (let j = 0; j < channel.users.length; j++) {
+        // console.log(socketsList[i].name + " " + channel.users[j]);
+        // console.log(socketsList[i].name === channel.users[j]);
+        if (socketsList[i].name === channel.users[j]) {
+          // console.log("pop up envoyé a " + socketsList[i].name);
+
+          socketsList[i].socket.emit(
+            "pop up",
+            roomName,
+            senderNickname,
+            message
           );
         }
       }
@@ -70,7 +107,7 @@ function sendTo(name) {}
 io.on("connection", (socket) => {
   // repository.addMessage("moi", "coucou les gars", "&").then((res) => {
   //   console.log(res);
-  // });
+  // });cr
 
   socket.emit("connected");
 
@@ -100,8 +137,13 @@ io.on("connection", (socket) => {
               if (joinedRooms.commandResult === "error") {
                 socket.emit("error");
               } else {
-                // console.log(joinedRooms);
-                socket.emit("joined rooms", joinedRooms);
+                console.log(joinedRooms);
+                socket.emit("joined rooms", joinedRooms, "delete", roomName);
+                emitPopUpToAllUSersOfTheRoom(
+                  roomName,
+                  nickname,
+                  `${nickname} a quitté le salon ${roomName}`
+                );
               }
             });
         } else {
@@ -120,9 +162,12 @@ io.on("connection", (socket) => {
             if (joinedRooms.commandResult === "error") {
               socket.emit("error");
             } else {
-              // console.log(joinedRooms);
-              socket.emit("joined rooms", joinedRooms);
-              emitPopUpToAllUSersOfTheRoom(roomName, nickname);
+              socket.emit("joined rooms", joinedRooms, "add", roomName);
+              emitPopUpToAllUSersOfTheRoom(
+                roomName,
+                nickname,
+                `${nickname} a rejoint le salon ${roomName}`
+              );
             }
           });
       } else {
@@ -138,7 +183,7 @@ io.on("connection", (socket) => {
   socket.on("change name", (name) => {
     // console.log(socket);
     repository.login(name).then((truc) => {
-      console.log(truc.commandResult);
+      // console.log(truc.commandResult);
       if (truc.commandResult === "success") {
         socket.emit("nickname ok", name);
 
@@ -161,6 +206,7 @@ io.on("connection", (socket) => {
       if (truc.commandResult === "success") {
         socket.emit("nickname ok", name);
         socketsList.push({ name: name, socket: socket });
+        console.log(socketsList.length + "personnes connecté");
         // console.log(socketsList);
         // console.log(socketsList.length);
       } else {
@@ -184,8 +230,8 @@ io.on("connection", (socket) => {
               if (joinedRooms.commandResult === "error") {
                 socket.emit("error");
               } else {
-                console.log(joinedRooms);
-                socket.emit("joined rooms", joinedRooms);
+                // console.log(joinedRooms);
+                socket.emit("joined rooms", joinedRooms, "add", roomName);
               }
             });
         });
@@ -204,32 +250,60 @@ io.on("connection", (socket) => {
     // gerer lidentité avec des cookies ?
   });
   socket.on("delete room", (roomName) => {
-    console.log("deleting room " + roomName);
-    let truc = repository.deleteChannel(roomName).then((truc) => {
-      if (truc.commandResult === "success") {
-        let truc = repository.getChannels().then((truc) => {
-          socket.emit("rooms", truc);
-          let joinedRooms = repository
-            .getUserSubscribedChannels(roomName)
-            .then((joinedRooms) => {
-              if (joinedRooms.commandResult === "error") {
-                socket.emit("error");
-              } else {
-                console.log(joinedRooms);
-                socket.emit("joined rooms", joinedRooms);
+    let users;
+    let machin = repository.getChannelByName(roomName).then((truc) => {
+      try {
+        users = truc.users;
+      } catch (e) {
+        console.log("error");
+      }
+      if (users === null) {
+        socket.emit("error");
+      } else {
+        let truc = repository.deleteChannel(roomName).then((truc) => {
+          if (truc.commandResult === "success") {
+            let truc = repository.getChannels().then((truc) => {
+              socket.emit("rooms", truc);
+
+              for (let i = 0; i < socketsList.length; i++) {
+                for (let j = 0; j < users.length; j++) {
+                  // /pour chaque personne du salon on recup la socket associée
+                  // console.log(socketsList[i].name);
+                  // console.log(channel.users[j]);
+                  if (socketsList[i].name === users[j]) {
+                    console.log(socketsList.length + " personnes connectées");
+                    console.log("message envoyé a " + socketsList[i].name);
+
+                    repository
+                      .getUserSubscribedChannels(users[j])
+                      .then((joinedRooms) => {
+                        if (joinedRooms.commandResult === "error") {
+                          socket.emit("error");
+                        } else {
+                          console.log(joinedRooms);
+                          socketsList[i].socket.emit(
+                            "joined rooms",
+                            joinedRooms,
+                            "delete",
+                            roomName
+                          );
+                          repository.getChannels().then((truc) => {
+                            socketsList[i].socket.emit("rooms", truc);
+                          });
+                        }
+                      });
+                  }
+                }
               }
             });
+          } else {
+            socket.emit("error");
+          }
         });
-      } else {
-        socket.emit("error");
       }
     });
   });
-  // le front demande dafficher une autre room
-  // socket.on("change room", (roomName) => {
-  //   let messages = repository.getMessagesByChannel(roomName);
-  //   socket.emit("display message", messages);
-  // });
+
   socket.on("get messages", (roomName) => {
     console.log("je veux les messages de la room " + roomName);
     let truc = repository.getMessagesByChannel(roomName).then((res) => {
@@ -237,23 +311,16 @@ io.on("connection", (socket) => {
       if (res.commandResult === "error") {
         socket.emit("error");
       } else {
-        // if()
-        let messagesTab = [];
-        for (let i = 0; i < res.length; i++) {
-          let messageValues = [];
-          messageValues.push(res[i].text);
-          messageValues.push(res[i].author);
-          messageValues.push(res[i].date);
-          messageValues.push(res[i].channelName);
-          messagesTab.push(messageValues);
-        }
-        // console.log(messagesTab);
-        socket.emit("display messages", messagesTab, roomName);
+        // console.log(room);
+        console.log(typeof roomName);
+        console.log("get: " + roomName);
+        socket.emit("display messages", res, roomName, "get");
       }
     });
   });
   socket.on("publish message", (message, activeRoom, nickname) => {
-    // console.log(message + activeRoom + nickname);
+    // console.log(activeRoom, nickname);
+    console.log(activeRoom + " " + nickname);
     let truc = repository
       .addMessage(nickname, message, activeRoom)
       .then((truc) => {
@@ -262,22 +329,11 @@ io.on("connection", (socket) => {
           if (res.commandResult === "error") {
             socket.emit("error");
           } else {
-            let messagesTab = [];
-            for (let i = 0; i < res.length; i++) {
-              let messageValues = [];
-              messageValues.push(res[i].text);
-              messageValues.push(res[i].author);
-              messageValues.push(res[i].date);
-              messageValues.push(res[i].channelName);
-              messagesTab.push(messageValues);
-            }
-            // console.log(messagesTab);
-            emitMessagesToAllUSers(messagesTab, activeRoom);
-            // socket.emit("display messages", messagesTab, activeRoom);
+            emitMessagesToAllUSers(res, activeRoom);
           }
         });
       });
-    console.log("publishing message: " + message);
+    // console.log("publishing message: " + message);
   });
   socket.on("delete message", (message) => {
     console.log("deleting message: " + message);
@@ -298,17 +354,24 @@ io.on("connection", (socket) => {
         if (joinedRooms.commandResult === "error") {
           socket.emit("error");
         } else {
-          console.log(joinedRooms);
+          // console.log(joinedRooms);
           for (let index = 0; index < joinedRooms.length; index++) {
             let truc = repository
               .removeUserFromChannel(joinedRooms[index].name, username)
               .then((truc) => {
-                console.log(truc);
+                // console.log(truc);
               });
           }
         }
       });
+    repository.logout(username).then((res) => {
+      console.log(res);
+    });
     console.log(socketsList.length);
     console.log("user disconnected");
   });
 });
+
+//liste des choses a faire
+
+// ondeconect : send pop up to all users from all salons where users has joined

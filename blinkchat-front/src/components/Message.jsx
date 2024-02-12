@@ -1,7 +1,7 @@
 // import { useState } from "react";
 // import { socket } from "../socket";
 
-export default function Message({ publishMessage, setErrorCommand }) {
+export default function Message({ publishMessage, activeRoom }) {
   // const [message, setMessage] = useState("");
 
   // const handleChange = (e) => {
@@ -11,14 +11,10 @@ export default function Message({ publishMessage, setErrorCommand }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setErrorCommand(false);
+
     const newMessage = e.target[0].value;
     document.getElementById("input").value = "";
-    publishMessage(newMessage);
-    console.log("ca devrai reset");
-    // e.reset();
-    // console.log(message);
-    // setMessage(""); // Reset the state value to empty
+    publishMessage(newMessage, activeRoom);
   };
 
   return (

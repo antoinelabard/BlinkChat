@@ -6,7 +6,7 @@ export default function ChooseNicknameForm({isConnected,errorNickname,chooseName
     <div id="form-container">
       <div id="topForm">
         {isConnected ? <PiPlugsConnectedBold /> : <PiPlugsBold />}
-        {errorNickname && <p id="error-message">Nickname not available</p>}
+        {<p id="error-message">Nickname not available</p>}
       </div>
       <div id="chooseNickname">
         <form onSubmit={(e) => {

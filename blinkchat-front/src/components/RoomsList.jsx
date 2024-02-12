@@ -1,6 +1,4 @@
 export default function RoomsList({ rooms }) {
-  console.log(rooms + "ferefer");
-
   // soit une liste de :[username,salon]
   // soit une list d'objet message
 
@@ -9,10 +7,7 @@ export default function RoomsList({ rooms }) {
       <div>Liste des salons</div>
       <ul>
         {rooms.length ? (
-          rooms.map((elem) => (
-            <li key={elem.name}>{elem.name}</li>
-            // <li key={elem.name}>{JSON.stringify(elem.name)}</li>
-          ))
+          rooms.map((elem) => <li key={elem.name}>{elem.name}</li>)
         ) : (
           <li>Pas de salon</li>
         )}
