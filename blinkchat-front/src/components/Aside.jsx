@@ -12,7 +12,7 @@ export default function Aside({
   }, [newMessageCount]);
   // console.log(newMessageCount);
   return (
-    <aside id="aside" style={{ height: "100%", border: "5px solid green" }}>
+    <aside id="aside">
       <h2>Rooms</h2>
       <ul>
         {joinedRooms.length ? (

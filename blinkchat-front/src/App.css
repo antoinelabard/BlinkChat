@@ -102,7 +102,6 @@ table {
 }
 
 #messageForm {
-  height: 100%;
   display: flex;
   grid-row-start: 2;
   grid-template-columns: 5fr 1fr;
@@ -127,21 +126,20 @@ table {
   color: #fff;
 }
 
-#mainBody {
+#mainDiv {
   height: 100vh;
   display: grid;
   grid-template-rows: 10% 90%;
 }
-#mainBody > section {
+#mainDiv > section {
   display: grid;
   grid-template-columns: 1fr 5fr;
-  width: 100%;
 }
 
 #aside {
   background-color: #625B59;
   border-right: 2px solid black;
-  overflow: scroll;
+  overflow: auto;
 }
 #aside > h2 {
   font-size: 30px;
@@ -177,7 +175,6 @@ table {
 }
 
 #header {
-  width: 100%;
   background: #B0ADAA;
   display: flex;
   justify-content: space-between;

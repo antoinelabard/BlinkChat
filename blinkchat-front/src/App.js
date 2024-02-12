@@ -235,11 +235,10 @@ function App() {
 
   return (
     <>
-      {isConnected ? <PiPlugsConnectedBold /> : <PiPlugsBold />}
-      <ToastContainer />
+    <ToastContainer />
       {nickname ? (
         <>
-            <body id="mainBody">
+          <div id="mainDiv">
           <Header activeRoom={activeRoom} userName={nickname} />
           <section>
             <Aside
@@ -256,7 +255,7 @@ function App() {
               activeRoom={activeRoom}
             />
             </section>
-          </body>
+          </div>
         </>
       ) : (
         <ChooseNicknameForm chooseName={chooseName} />
