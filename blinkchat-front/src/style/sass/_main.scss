@@ -3,4 +3,8 @@
     display: grid;
     grid-template-rows: 90% 10%;
     border-top: 2px solid black;
+    overflow: auto;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }

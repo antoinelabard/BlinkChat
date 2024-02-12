@@ -99,6 +99,10 @@ table {
   display: grid;
   grid-template-rows: 90% 10%;
   border-top: 2px solid black;
+  overflow: auto;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 #messageForm {
@@ -152,7 +156,7 @@ table {
   z-index: 1;
 }
 #aside > ul > li {
-  display: flex;
+  display: grid;
   padding-left: 15px;
   border-bottom: 2px solid #BBADA8;
   background: #625B59;
@@ -161,6 +165,20 @@ table {
   color: #fff;
   font-size: 20px;
   transition: background 0.3s ease;
+  grid-template-columns: 85% 15%;
+}
+#aside > ul > li > p:first-child {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding-right: 10px;
+}
+#aside > ul > li > p:nth-child(2) {
+  border-radius: 15px;
+  background: yellow;
+  color: black;
+  text-align: center;
+  justify-self: center;
+  width: 80%;
 }
 #aside > ul > li:hover {
   background: #443F3E;
@@ -172,6 +190,7 @@ table {
   font-size: 20px;
   color: #fff;
   text-align: center;
+  padding-top: 10px;
 }
 
 #header {
@@ -223,6 +242,39 @@ h1 {
   padding-top: 10px;
   border-left: 2px solid black;
   text-align: justify;
+  overflow-wrap: break-word;
+}
+
+#roomList {
+  overflow: auto;
+}
+#roomList > div {
+  font-size: 30px;
+  text-align: center;
+  background-color: #be6944;
+  border: 2px solid black;
+  border-top: none;
+  border-left: none;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+#roomList > ul {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+#roomList > ul > li {
+  width: 80%;
+  margin: 0 auto;
+  margin-top: 2vh;
+  margin-bottom: 1vh;
+  border-radius: 15px;
+  background: #A3ADBF;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 2vh;
+  font-size: 20px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
 }
 
 /*# sourceMappingURL=App.css.map */

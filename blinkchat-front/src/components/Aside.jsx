@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import minus from "../assets/remove-circle-outline.svg"
 
 export default function Aside({
   joinedRooms,
   getMessagesByRoom,
   newMessageCount,
+  graphicalQuitRoom,
 }) {
   // console.log("nouveau render de aside ");
   useEffect(() => {
@@ -18,14 +20,17 @@ export default function Aside({
         {joinedRooms.length ? (
           joinedRooms.map((room, index) => (
             <li key={room.name}>
-              <button onClick={() => getMessagesByRoom(room.name)}>
-                {room.name}
-              </button>
-              <p>{newMessageCount[index]}</p>
+              <div onClick={() => getMessagesByRoom(room.name)}>
+              <p>{room.name}</p>
+              {newMessageCount[index] === 0 ? <p></p> :  
+              <p id="a">{newMessageCount[index] > 99 ? "99+" : newMessageCount[index]}</p>
+              }  
+              </div>
+              <figure onClick={ () => graphicalQuitRoom(room.name)}><img src = {minus}></img></figure>
             </li>
           ))
         ) : (
-          <li>Pas de salon</li>
+          <p>Pas de salon</p>
         )}
       </ul>
     </aside>

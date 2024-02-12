@@ -29,6 +29,14 @@ function App() {
   // definit quel composant occupe l'espace central
   const [activeTab, setActiveTab] = useState(null);
 
+  function graphicalJoinRoom(room) {
+    socket.emit("join room", room, nickname);
+  }
+
+  function graphicalQuitRoom(room) {
+    socket.emit("quit room", room, nickname);
+  }
+
   function getMessagesByRoom(room) {
     socket.emit("get messages", room);
   }
@@ -204,6 +212,10 @@ function App() {
         toast("Vous avez rejoint le salon " + roomName, { toastId: message });
       }
     }
+    function onReset() {
+      setActiveTab(null);
+      setActiveRoom(null);
+    }
     socket.on("nickname ok", onChangeNameOk);
     socket.on("nickname not allow", onChangeNameNotOk);
     socket.on("choose another nickname", onChooseNameNotOk);
@@ -215,6 +227,7 @@ function App() {
     socket.on("pop up", onPopUp);
     socket.on("joined rooms", onJoinedRoom);
     socket.on("display messages", onMessages);
+    socket.on("reset", onReset);
     // socket.on("update messages", onUpdateMessages);
     return () => {
       socket.off("nickname ok", onChangeNameOk);
@@ -245,6 +258,7 @@ function App() {
               joinedRooms={joinedRooms}
               getMessagesByRoom={getMessagesByRoom}
               newMessageCount={newMessageCount}
+              graphicalQuitRoom= {graphicalQuitRoom}
             />
             <Main
               publishMessage={publishMessage}
@@ -253,6 +267,7 @@ function App() {
               messages={messages}
               users={users}
               activeRoom={activeRoom}
+              graphicalJoinRoom = {graphicalJoinRoom}
             />
             </section>
           </div>

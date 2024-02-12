@@ -139,6 +139,7 @@ io.on("connection", (socket) => {
               } else {
                 console.log(joinedRooms);
                 socket.emit("joined rooms", joinedRooms, "delete", roomName);
+                socket.emit("reset");
                 emitPopUpToAllUSersOfTheRoom(
                   roomName,
                   nickname,

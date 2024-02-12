@@ -18,11 +18,11 @@ export default function ConversationList({ messages, activeRoom }) {
             (message, index) => (
               <li key={index}>
                 <div id="info">
-                  <span>{message[1]}<br/></span>
-                  <span>{message[2]}</span>
+                  <span>{message.author}<br/></span>
+                  <span>{message.date}</span>
                 </div>
                 <div id="message">
-                  <p>{message[0]}</p>
+                  <p>{message.text}</p>
                 </div>
               </li>
             )

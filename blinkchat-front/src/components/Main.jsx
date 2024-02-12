@@ -12,11 +12,12 @@ export default function Main({
   messages,
   users,
   activeRoom,
+  graphicalJoinRoom,
 }) {
   return (
     <main id="mainPage">
       {activeTab === "commands" ? <CommandsList /> : null}
-      {activeTab === "rooms" ? <RoomsList rooms={rooms} /> : null}
+      {activeTab === "rooms" ? <RoomsList rooms={rooms} graphicalJoinRoom={graphicalJoinRoom}/> : null}
       {activeTab === "users" ? (
         <UsersList users={users} activeRoom={activeRoom} />
       ) : null}

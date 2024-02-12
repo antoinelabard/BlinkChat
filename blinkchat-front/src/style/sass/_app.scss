@@ -3,9 +3,6 @@
     display: grid;
     grid-template-rows: 10% 90%;
 
-    &> header {
-    }
-
     &> section {
         display: grid;
         grid-template-columns: 1fr 5fr;
