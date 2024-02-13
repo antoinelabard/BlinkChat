@@ -1,4 +1,4 @@
-export default function RoomsList({ rooms, graphicalJoinRoom}) {
+export default function RoomsList({ rooms, graphicalJoinRoom, graphicalDeleteRoom}) {
   // soit une liste de :[username,salon]
   // soit une list d'objet message
 
@@ -7,7 +7,7 @@ export default function RoomsList({ rooms, graphicalJoinRoom}) {
       <div>Liste des salons</div>
       <ul>
         {rooms.length ? (
-          rooms.map((elem) => <li key={elem.name} onClick={() => graphicalJoinRoom(elem.name)} >{elem.name}</li>)
+          rooms.map((elem) => <li key={elem.name} ><div onClick={() => graphicalJoinRoom(elem.name)} >{elem.name}</div><div onClick={() => graphicalDeleteRoom(elem.name)}>X</div></li>)
         ) : (
           <li>Pas de salon</li>
         )}

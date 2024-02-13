@@ -1,26 +1,29 @@
 #header {
     background: #B0ADAA;
-    display: flex;
-    justify-content: space-between;
-    align-items: center; 
-    padding: 20px; 
+    display: grid;
+    grid-template-columns: 5fr 1fr;
+
+    &> div:first-child {
+        display: grid;  
+        &> h1 {
+            font-size: 60px; 
+            align-self: center;
+            padding-left: 2vw;
+        }
+    }
+
+    & > div:last-child {
+        display: grid;
+        gap: 10px; 
+        align-self: center; 
+
+        & > p {
+            margin: 0; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap;
+        }
+    }
 }
 
-#header > div:first-child {
-    flex-grow: 1; 
-}
 
-h1 {
-    font-size: 80px; 
-}
-
-#header > div:last-child {
-    text-align: right; 
-}
-
-
-#header > div:last-child > div {
-    color: red;
-    font-weight: bold;
-    margin-right: 10px;
-}

@@ -37,6 +37,10 @@ function App() {
     socket.emit("quit room", room, nickname);
   }
 
+  function graphicalDeleteRoom(room) {
+    socket.emit("delete room", room);
+  }
+
   function getMessagesByRoom(room) {
     socket.emit("get messages", room);
   }
@@ -268,6 +272,7 @@ function App() {
               users={users}
               activeRoom={activeRoom}
               graphicalJoinRoom = {graphicalJoinRoom}
+              graphicalDeleteRoom = {graphicalDeleteRoom}
             />
             </section>
           </div>

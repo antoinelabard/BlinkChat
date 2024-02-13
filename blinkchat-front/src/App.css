@@ -203,28 +203,27 @@ table {
 
 #header {
   background: #B0ADAA;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
+  display: grid;
+  grid-template-columns: 5fr 1fr;
 }
-
 #header > div:first-child {
-  flex-grow: 1;
+  display: grid;
 }
-
-h1 {
-  font-size: 80px;
+#header > div:first-child > h1 {
+  font-size: 60px;
+  align-self: center;
+  padding-left: 2vw;
 }
-
 #header > div:last-child {
-  text-align: right;
+  display: grid;
+  gap: 10px;
+  align-self: center;
 }
-
-#header > div:last-child > div {
-  color: red;
-  font-weight: bold;
-  margin-right: 10px;
+#header > div:last-child > p {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 #conversationList {
@@ -283,6 +282,42 @@ h1 {
   padding: 2vh;
   font-size: 20px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+}
+#userList {
+  overflow: auto;
+}
+#userList > div {
+  font-size: 30px;
+  text-align: center;
+  background-color: #be6944;
+  border: 2px solid black;
+  border-top: none;
+  border-left: none;
+}
+#userList > ul {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+#userList > ul > li {
+  width: 80%;
+  text-align: center;
+  margin: 0 auto;
+  margin-top: 2vh;
+  margin-bottom: 1vh;
+  border-radius: 15px;
+  background: #A3ADBF;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 2vh;
+  font-size: 20px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+}
+#commandsList > div {
+  font-size: 30px;
+  text-align: center;
+  background-color: #be6944;
+  border: 2px solid black;
+  border-right: none;
 }
 
 /*# sourceMappingURL=App.css.map */
