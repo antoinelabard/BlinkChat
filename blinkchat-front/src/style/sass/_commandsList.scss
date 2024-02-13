@@ -5,6 +5,16 @@
         background-color: #be6944;
         border: 2px solid black;
         border-right: none;
+        border-left: none;
+        border-top: none;
+    }
+
+    &> ul {
+        &> li {
+            padding-left: 2vw;
+            padding-top: 2vw;
+            font-size: 24px;
+        }
     }
 
 }
