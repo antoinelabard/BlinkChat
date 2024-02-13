@@ -208,7 +208,17 @@ io.on("connection", (socket) => {
         socketsList.push({ name: name, socket: socket });
         console.log(socketsList.length + "personnes connecté");
         // console.log(socketsList);
-        // console.log(socketsList.length);
+
+        let joinedRooms = repository
+          .getUserSubscribedChannels(name)
+          .then((joinedRooms) => {
+            if (joinedRooms.commandResult === "error") {
+              socket.emit("error");
+            } else {
+              console.log(joinedRooms);
+              socket.emit("joined rooms", joinedRooms, "add", joinedRooms.name);
+            }
+          });
       } else {
         socket.emit("choose another nickname");
       }
@@ -341,6 +351,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     let username;
+
     for (let i = 0; i < socketsList.length; i++) {
       if (socket === socketsList[i].socket) {
         username = socketsList[i].name;
@@ -365,6 +376,7 @@ io.on("connection", (socket) => {
         }
       });
     repository.logout(username).then((res) => {
+      console.log("logout");
       console.log(res);
     });
     console.log(socketsList.length);
