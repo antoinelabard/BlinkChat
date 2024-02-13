@@ -36,8 +36,6 @@ function emitMessagesToAllUSers(messagesTab, roomName) {
   repository.getChannelByName(roomName).then((channel) => {
     for (let i = 0; i < socketsList.length; i++) {
       for (let j = 0; j < channel.users.length; j++) {
-        // console.log(socketsList[i].name);
-        // console.log(channel.users[j]);
         if (socketsList[i].name === channel.users[j]) {
           console.log(socketsList.length + " personnes connectées");
           console.log("message envoyé a " + socketsList[i].name);
@@ -124,6 +122,22 @@ io.on("connection", (socket) => {
 
       // socket.emit("rooms", truc);
     });
+  });
+  socket.on("private message", (nickname, dest, privMessage) => {
+    console.log("message de " + nickname);
+    console.log("message to : " + dest);
+
+    for (let i = 0; i < socketsList.length; i++) {
+      if (socketsList[i].name === dest) {
+        // // console.log(socketsList.length + " personnes connectées");
+        console.log("message envoyé a " + socketsList[i].name);
+        console.log(privMessage);
+        // console.log(roomName);
+        socket.emit("private message", dest, "message envoyé a ");
+        socketsList[i].socket.emit("private message", privMessage, nickname);
+        // socket.emit("display messages", res, roomName, "get");
+      }
+    }
   });
   socket.on("quit room", (roomName, nickname) => {
     let truc = repository
