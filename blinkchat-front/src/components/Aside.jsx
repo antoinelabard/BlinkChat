@@ -1,19 +1,11 @@
 import React, { useState, useEffect } from "react";
-
-// function RoomLi({room}) {
-//   // const [unReadMessages, ]
-//   return (
-//     <li key={room.name}>
-//       <button onClick={() => getMessagesByRoom(room.name)}>{room.name}</button>
-//       <p>{newMessageCount[index]}</p>
-//     </li>
-//   );
-// }
+import minus from "../assets/remove-circle-outline.svg"
 
 export default function Aside({
   joinedRooms,
   getMessagesByRoom,
   newMessageCount,
+  graphicalQuitRoom,
 }) {
   // console.log("nouveau render de aside ");
   useEffect(() => {
@@ -22,21 +14,23 @@ export default function Aside({
   }, [newMessageCount]);
   // console.log(newMessageCount);
   return (
-    <aside style={{ height: "100%", border: "5px solid green" }}>
+    <aside id="aside">
       <h2>Rooms</h2>
       <ul>
         {joinedRooms.length ? (
           joinedRooms.map((room, index) => (
             <li key={room.name}>
-              <button onClick={() => getMessagesByRoom(room.name)}>
-                {room.name}
-              </button>
-              <p>{newMessageCount[index]}</p>
+              <div onClick={() => getMessagesByRoom(room.name)}>
+              <p>{room.name}</p>
+              {newMessageCount[index] === 0 ? <div></div> :  
+              <div><p id="a">{newMessageCount[index] > 99 ? "99+" : newMessageCount[index]}</p></div>
+              }  
+              </div>
+              <figure onClick={ () => graphicalQuitRoom(room.name)}><img src = {minus}></img></figure>
             </li>
-            // <RoomLi room={room} />
           ))
         ) : (
-          <li>Pas de salon</li>
+          <p>Pas de salon</p>
         )}
       </ul>
     </aside>

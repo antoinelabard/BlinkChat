@@ -1,0 +1,29 @@
+#conversationList {
+    overflow: scroll;
+    &>h1 {
+        background: #ebe8e4;
+    }
+    &>ul {
+        &>li {
+            border-bottom: 2px solid black;
+            display: grid;
+            grid-template-columns: 20% 80%;
+            &>#info {
+                padding-top: 10px;
+                padding-left: 10px;
+                & > span:nth-child(2) {
+                    color: #5461ee;
+                }
+            }
+            &>#message {
+                padding: 30px;
+                padding-top: 10px;
+                border-left: 2px solid black;
+                text-align: justify;
+                overflow-wrap: break-word;
+            }
+        }
+    }
+        
+}
+    

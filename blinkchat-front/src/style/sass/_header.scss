@@ -1,0 +1,29 @@
+#header {
+    background: #B0ADAA;
+    display: grid;
+    grid-template-columns: 5fr 1fr;
+
+    &> div:first-child {
+        display: grid;  
+        &> h1 {
+            font-size: 60px; 
+            align-self: center;
+            padding-left: 2vw;
+        }
+    }
+
+    & > div:last-child {
+        display: grid;
+        gap: 10px; 
+        align-self: center; 
+
+        & > p {
+            margin: 0; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap;
+        }
+    }
+}
+
+

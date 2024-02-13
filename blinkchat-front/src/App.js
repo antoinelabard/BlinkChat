@@ -25,12 +25,21 @@ function App() {
   const [rooms, setRooms] = useState([""]);
   const [newMessageCount, setNewMessageCount] = useState([]);
 
-  // seulement pour la 1ere page
-
-  // affiche un message d'erreur sur la page principle
-  // const [errorCommand, setErrorCommand] = useState(false);
+  // affiche un message d'erreur sur la page principale
   // definit quel composant occupe l'espace central
   const [activeTab, setActiveTab] = useState(null);
+
+  function graphicalJoinRoom(room) {
+    socket.emit("join room", room, nickname);
+  }
+
+  function graphicalQuitRoom(room) {
+    socket.emit("quit room", room, nickname);
+  }
+
+  function graphicalDeleteRoom(room) {
+    socket.emit("delete room", room);
+  }
 
   function getMessagesByRoom(room) {
     socket.emit("get messages", room);
@@ -70,7 +79,7 @@ function App() {
       } else if (message === "/commands") {
         setActiveTab("commands");
       } else if (message.startsWith("/delete") && args.length === 2) {
-        // console.log("socket de delete envoyé");
+        console.log("socket de delete envoyé");
         socket.emit("delete room", args[1]);
       } else if (message.startsWith("/join") && args.length === 2) {
         socket.emit("join room", args[1], nickname);
@@ -87,28 +96,10 @@ function App() {
 
       // console.log("provide a nickname");
     } else {
-      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      console.log(activeRoom);
-      console.log(typeof activeRoom);
       socket.emit("publish message", message, activeRoom, nickname);
     }
   }
   //////////////////////////////////////////////////////////////
-  //   case "/list":
-  //     // exemple "/list truc"
-  //     if (message.split("").length > 1) {
-  //     } else {
-  //       console.log("list!");
-  //       getRooms();
-  //     }
-
-  //     break;
-
-  //   case "/users":
-  //     console.log("users!");
-  //     setActiveTab(() => "users");
-  //     break;
-  /////////////////////////////////////////////////////////////////////////////
 
   useEffect(() => {
     function onConnect() {
@@ -184,26 +175,7 @@ function App() {
         }
       }
     }
-    // function onUpdateMessages(messages, roomName) {
-    //   // console.log("socket de message recu");
-    //   // console.log(messages);
-    //   console.log("€€€€€€€€€€€€€€€€€€€€€€€€");
-    //   console.log(roomName);
-    //   console.log("room actuelle" + activeRoom);
-    //   console.log(roomName === activeRoom);
-
-    //   if (roomName === activeRoom) {
-    //     console.log("nouvelle liste de message en provenance de " + roomName);
-    //     console.log("je suis actuellement dans le salon " + activeRoom);
-    //     setMessages(messages);
-    //     setActiveTab("messages");
-    //     setActiveRoom(roomName);
-    //   }
-    // }
     function onJoinedRoom(channels, type, roomName) {
-      // console.log(channels);
-      // console.log("newjoined rrom");
-      // console.log(joinedRooms.length + "type: " + type);
       if (joinedRooms.length === 0) {
         let truc = [];
         for (let i = 0; i < channels.length; i++) {
@@ -244,6 +216,10 @@ function App() {
         toast("Vous avez rejoint le salon " + roomName, { toastId: message });
       }
     }
+    function onReset() {
+      setActiveTab(null);
+      setActiveRoom(null);
+    }
     socket.on("nickname ok", onChangeNameOk);
     socket.on("nickname not allow", onChangeNameNotOk);
     socket.on("choose another nickname", onChooseNameNotOk);
@@ -255,6 +231,7 @@ function App() {
     socket.on("pop up", onPopUp);
     socket.on("joined rooms", onJoinedRoom);
     socket.on("display messages", onMessages);
+    socket.on("reset", onReset);
     // socket.on("update messages", onUpdateMessages);
     return () => {
       socket.off("nickname ok", onChangeNameOk);
@@ -275,22 +252,17 @@ function App() {
 
   return (
     <>
-      {isConnected ? <PiPlugsConnectedBold /> : <PiPlugsBold />}
-      <ToastContainer />
+    <ToastContainer />
       {nickname ? (
         <>
+          <div id="mainDiv">
           <Header activeRoom={activeRoom} userName={nickname} />
-          <section
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 5fr",
-              height: "80%",
-            }}
-          >
+          <section>
             <Aside
               joinedRooms={joinedRooms}
               getMessagesByRoom={getMessagesByRoom}
               newMessageCount={newMessageCount}
+              graphicalQuitRoom= {graphicalQuitRoom}
             />
             <Main
               publishMessage={publishMessage}
@@ -299,8 +271,11 @@ function App() {
               messages={messages}
               users={users}
               activeRoom={activeRoom}
+              graphicalJoinRoom = {graphicalJoinRoom}
+              graphicalDeleteRoom = {graphicalDeleteRoom}
             />
-          </section>
+            </section>
+          </div>
         </>
       ) : (
         <ChooseNicknameForm chooseName={chooseName} />
