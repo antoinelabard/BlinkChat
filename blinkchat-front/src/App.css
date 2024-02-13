@@ -281,7 +281,17 @@ table {
   text-overflow: ellipsis;
   padding: 2vh;
   font-size: 20px;
+  display: grid;
+  grid-template-columns: 90% 10%;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+}
+#roomList > ul > li > div:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-self: center;
+}
+#roomList > ul > li > div:nth-child(2) {
+  justify-self: center;
 }
 #userList {
   overflow: auto;
