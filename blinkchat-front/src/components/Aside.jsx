@@ -22,8 +22,8 @@ export default function Aside({
             <li key={room.name}>
               <div onClick={() => getMessagesByRoom(room.name)}>
               <p>{room.name}</p>
-              {newMessageCount[index] === 0 ? <p></p> :  
-              <p id="a">{newMessageCount[index] > 99 ? "99+" : newMessageCount[index]}</p>
+              {newMessageCount[index] === 0 ? <div></div> :  
+              <div><p id="a">{newMessageCount[index] > 99 ? "99+" : newMessageCount[index]}</p></div>
               }  
               </div>
               <figure onClick={ () => graphicalQuitRoom(room.name)}><img src = {minus}></img></figure>

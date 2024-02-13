@@ -165,20 +165,28 @@ table {
   color: #fff;
   font-size: 20px;
   transition: background 0.3s ease;
-  grid-template-columns: 85% 15%;
+  grid-template-columns: 80% 20%;
 }
-#aside > ul > li > p:first-child {
+#aside > ul > li > figure > img {
+  width: 67%;
+  margin-left: 0.6vw;
+}
+#aside > ul > li > div {
+  display: grid;
+  grid-template-columns: 80% 20%;
+}
+#aside > ul > li > div > p:first-child {
   text-overflow: ellipsis;
   overflow: hidden;
   padding-right: 10px;
 }
-#aside > ul > li > p:nth-child(2) {
+#aside > ul > li > div > div > p {
   border-radius: 15px;
   background: yellow;
   color: black;
   text-align: center;
   justify-self: center;
-  width: 80%;
+  height: 100%;
 }
 #aside > ul > li:hover {
   background: #443F3E;
