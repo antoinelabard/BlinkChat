@@ -12,11 +12,13 @@ export default function Main({
   messages,
   users,
   activeRoom,
+  graphicalJoinRoom,
+  graphicalDeleteRoom
 }) {
   return (
-    <main style={{ height: "100%" }}>
+    <main id="mainPage">
       {activeTab === "commands" ? <CommandsList /> : null}
-      {activeTab === "rooms" ? <RoomsList rooms={rooms} /> : null}
+      {activeTab === "rooms" ? <RoomsList rooms={rooms} graphicalJoinRoom={graphicalJoinRoom} graphicalDeleteRoom={graphicalDeleteRoom}/> : null}
       {activeTab === "users" ? (
         <UsersList users={users} activeRoom={activeRoom} />
       ) : null}

@@ -1,38 +1,340 @@
-.App {
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: "";
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#form-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   text-align: center;
+  z-index: 1;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+#topForm {
+  color: red;
+  font-weight: bold;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  margin: 10px;
+  font-size: 40px;
 }
 
-.App-link {
-  color: #61dafb;
+#chooseNickname {
+  background-color: #ebe8e4;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+#chooseNickname input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+#chooseNickname button {
+  background-color: #bdafa1;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+#mainPage {
+  background-color: #ebe8e4;
+  display: grid;
+  grid-template-rows: 90% 10%;
+  border-top: 2px solid black;
+  overflow: auto;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
+
+#messageForm {
+  display: flex;
+  grid-row-start: 2;
+  grid-template-columns: 5fr 1fr;
+  padding: 1rem;
+  background-color: #ebe8e4;
+}
+#messageForm > input {
+  flex: 4;
+  border: 1px solid #bdafa1;
+  margin-right: 10px;
+  background: #fff;
+  height: 100%;
+  border-radius: 5px;
+  padding-left: 10px;
+}
+#messageForm > button {
+  flex: 1;
+  background: #be6944;
+  height: 100%;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  color: #fff;
+}
+
+#mainDiv {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 10% 90%;
+}
+#mainDiv > section {
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+}
+
+#aside {
+  background-color: #625B59;
+  border-right: 2px solid black;
+  overflow: auto;
+}
+#aside > h2 {
+  font-size: 30px;
+  text-align: center;
+  background-color: #be6944;
+  border: 2px solid black;
+  border-right: none;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+#aside > ul > li {
+  display: grid;
+  padding-left: 15px;
+  border-bottom: 2px solid #BBADA8;
+  background: #625B59;
+  height: 50px;
+  align-items: center;
+  color: #fff;
+  font-size: 20px;
+  transition: background 0.3s ease;
+  grid-template-columns: 80% 20%;
+}
+#aside > ul > li > figure > img {
+  width: 67%;
+  margin-left: 0.6vw;
+}
+#aside > ul > li > div {
+  display: grid;
+  grid-template-columns: 80% 20%;
+}
+#aside > ul > li > div > p:first-child {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding-right: 10px;
+}
+#aside > ul > li > div > div > p {
+  border-radius: 15px;
+  background: yellow;
+  color: black;
+  text-align: center;
+  justify-self: center;
+  height: 100%;
+}
+#aside > ul > li:hover {
+  background: #443F3E;
+}
+#aside > ul > li.active {
+  background: #282524;
+}
+#aside > ul > p {
+  font-size: 20px;
+  color: #fff;
+  text-align: center;
+  padding-top: 10px;
+}
+
+#header {
+  background: #B0ADAA;
+  display: grid;
+  grid-template-columns: 5fr 1fr;
+}
+#header > div:first-child {
+  display: grid;
+}
+#header > div:first-child > h1 {
+  font-size: 60px;
+  align-self: center;
+  padding-left: 2vw;
+}
+#header > div:last-child {
+  display: grid;
+  gap: 10px;
+  align-self: center;
+}
+#header > div:last-child > p {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#conversationList {
+  overflow: scroll;
+}
+#conversationList > h1 {
+  background: #ebe8e4;
+}
+#conversationList > ul > li {
+  border-bottom: 2px solid black;
+  display: grid;
+  grid-template-columns: 20% 80%;
+}
+#conversationList > ul > li > #info {
+  padding-top: 10px;
+  padding-left: 10px;
+}
+#conversationList > ul > li > #info > span:nth-child(2) {
+  color: #5461ee;
+}
+#conversationList > ul > li > #message {
+  padding: 30px;
+  padding-top: 10px;
+  border-left: 2px solid black;
+  text-align: justify;
+  overflow-wrap: break-word;
+}
+
+#roomList {
+  overflow: auto;
+}
+#roomList > div {
+  font-size: 30px;
+  text-align: center;
+  background-color: #be6944;
+  border: 2px solid black;
+  border-top: none;
+  border-left: none;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+#roomList > ul {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+#roomList > ul > li {
+  width: 80%;
+  margin: 0 auto;
+  margin-top: 2vh;
+  margin-bottom: 1vh;
+  border-radius: 15px;
+  background: #A3ADBF;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 2vh;
+  font-size: 20px;
+  display: grid;
+  grid-template-columns: 90% 10%;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+}
+#roomList > ul > li > div:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-self: center;
+}
+#roomList > ul > li > div:nth-child(2) {
+  justify-self: center;
+}
+#userList {
+  overflow: auto;
+}
+#userList > div {
+  font-size: 30px;
+  text-align: center;
+  background-color: #be6944;
+  border: 2px solid black;
+  border-top: none;
+  border-left: none;
+}
+#userList > ul {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+#userList > ul > li {
+  width: 80%;
+  text-align: center;
+  margin: 0 auto;
+  margin-top: 2vh;
+  margin-bottom: 1vh;
+  border-radius: 15px;
+  background: #A3ADBF;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 2vh;
+  font-size: 20px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+}
+#commandsList > div {
+  font-size: 30px;
+  text-align: center;
+  background-color: #be6944;
+  border: 2px solid black;
+  border-right: none;
+  border-left: none;
+  border-top: none;
+}
+#commandsList > ul > li {
+  padding-left: 2vw;
+  padding-top: 2vw;
+  font-size: 24px;
+}
+
+/*# sourceMappingURL=App.css.map */

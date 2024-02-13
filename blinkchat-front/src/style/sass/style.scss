@@ -1,0 +1,12 @@
+// sass --watch .\src\style\sass\style.scss:.\src\App.css
+@import 'reset';
+@import 'chooseNicknamePage';
+@import 'main';
+@import 'message';
+@import 'app';
+@import 'aside';
+@import 'header';
+@import 'conversationList';
+@import 'roomList';
+@import 'userList';
+@import 'commandsList'

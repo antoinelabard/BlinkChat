@@ -1,0 +1,27 @@
+#messageForm {
+
+    display: flex;
+    grid-row-start: 2;
+    grid-template-columns: 5fr 1fr;
+    padding: 1rem;
+    background-color: #ebe8e4;
+
+    & > input {
+        flex: 4; 
+        border: 1px solid #bdafa1;
+        margin-right: 10px;
+        background: #fff;
+        height: 100%;
+        border-radius: 5px;
+        padding-left: 10px;
+    }
+
+    & > button {
+        flex: 1; 
+        background: #be6944;
+        height: 100%;
+        border-radius: 4px;
+        letter-spacing: 1px;
+        color: #fff;
+    }
+}

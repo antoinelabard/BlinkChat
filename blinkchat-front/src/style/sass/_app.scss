@@ -1,0 +1,11 @@
+#mainDiv {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 10% 90%;
+
+    &> section {
+        display: grid;
+        grid-template-columns: 1fr 5fr;
+        // height: 100%;
+    }
+}

@@ -1,8 +1,8 @@
 export default function CommandsList() {
   return (
-    <div style={{ border: "5px solid blue", overflowY: "auto", height: "85%" }}>
+    <div id="commandsList">
       <div>Liste des commandes</div>
-      <ul>
+      <ul>  
         <li>/nick nickname: define the nickname of the user on the serve</li>
         <li>
           /list [string]: list the available channels from the server. If string
