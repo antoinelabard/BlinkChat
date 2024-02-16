@@ -36,32 +36,6 @@ function emitMessagesToAllUSers(messagesTab, roomName) {
   repository.getChannelByName(roomName).then((channel) => {
     for (let i = 0; i < socketsList.length; i++) {
       for (let j = 0; j < channel.users.length; j++) {
-        // console.log(socketsList[i].name);
-        // console.log(channel.users[j]);
-        if (socketsList[i].name === channel.users[j]) {
-          console.log(socketsList.length + " personnes connectées");
-          console.log("message envoyé a " + socketsList[i].name);
-          console.log(roomName);
-
-          let bool = "update";
-          socketsList[i].socket.emit(
-            "display messages",
-            messagesTab,
-            roomName,
-            bool
-          );
-          // socket.emit("display messages", res, roomName, "get");
-        }
-      }
-    }
-  });
-}
-function emitDeleteRoomToAllUser() {
-  repository.getChannelByName(roomName).then((channel) => {
-    for (let i = 0; i < socketsList.length; i++) {
-      for (let j = 0; j < channel.users.length; j++) {
-        // console.log(socketsList[i].name);
-        // console.log(channel.users[j]);
         if (socketsList[i].name === channel.users[j]) {
           console.log(socketsList.length + " personnes connectées");
           console.log("message envoyé a " + socketsList[i].name);
@@ -103,27 +77,38 @@ function emitPopUpToAllUSersOfTheRoom(roomName, senderNickname, message) {
   });
 }
 let repository = new Repository();
-function sendTo(name) {}
+
 io.on("connection", (socket) => {
   // repository.addMessage("moi", "coucou les gars", "&").then((res) => {
   //   console.log(res);
   // });cr
-
+  console.log("+1");
   socket.emit("connected");
 
   socket.on("give me all users", (roomName) => {
-    // console.log(roomName);
     let truc = repository.getChannelByName(roomName).then((truc) => {
-      // console.log(truc.commandResult);
       if (truc.commandResult === "error") {
         socket.emit("error");
       } else {
-        // console.log(truc.users);
         socket.emit("users", truc.users);
       }
-
-      // socket.emit("rooms", truc);
     });
+  });
+  socket.on("private message", (nickname, dest, privMessage) => {
+    console.log("message de " + nickname);
+    console.log("message to : " + dest);
+
+    for (let i = 0; i < socketsList.length; i++) {
+      if (socketsList[i].name === dest) {
+        // // console.log(socketsList.length + " personnes connectées");
+        console.log("message envoyé a " + socketsList[i].name);
+        console.log(privMessage);
+        // console.log(roomName);
+        socket.emit("private message", dest, "message envoyé a ");
+        socketsList[i].socket.emit("private message", privMessage, nickname);
+        // socket.emit("display messages", res, roomName, "get");
+      }
+    }
   });
   socket.on("quit room", (roomName, nickname) => {
     let truc = repository
@@ -164,6 +149,7 @@ io.on("connection", (socket) => {
               socket.emit("error");
             } else {
               socket.emit("joined rooms", joinedRooms, "add", roomName);
+              socket.join(roomName);
               emitPopUpToAllUSersOfTheRoom(
                 roomName,
                 nickname,
@@ -181,6 +167,17 @@ io.on("connection", (socket) => {
       socket.emit("rooms", truc);
     });
   });
+  // socket.on("rename channel", (oldName, newName) => {
+  //   // socket.emit("Lien vers la version premnium");
+
+  //   repository.renameChannel(oldName, newName).then((res) => {
+  //     console.log(res);
+  //     if (res.commandResult === "success") {
+  //     } else {
+  //       socket.emit("success");
+  //     }
+  //   });
+  // });
   socket.on("change name", (name) => {
     // console.log(socket);
     repository.login(name).then((truc) => {
