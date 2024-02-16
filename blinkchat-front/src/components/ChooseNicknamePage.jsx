@@ -5,8 +5,7 @@ export default function ChooseNicknameForm({isConnected,errorNickname,chooseName
   return (
     <div id="form-container">
       <div id="topForm">
-        {isConnected ? <PiPlugsConnectedBold /> : <PiPlugsBold />}
-        {<p id="error-message">Nickname not available</p>}
+        <h1>BlinkChat</h1>
       </div>
       <div id="chooseNickname">
         <form onSubmit={(e) => {

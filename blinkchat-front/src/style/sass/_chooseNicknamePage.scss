@@ -5,40 +5,32 @@
     transform: translate(-50%, -50%);
     text-align: center; 
     z-index: 1;
-}
-
-#topForm {
-    color: red;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 10px;
-    font-size: 40px;
-}
-
-
-#chooseNickname {
-    background-color: #ebe8e4;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-
-    input {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid black;
-        border-radius: 5px;
+    &> #topForm {
+        font-size: 60px; 
+        align-self: center;
     }
 
-    button {
-        background-color: #bdafa1;
-        color: #fff;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
+    &> #chooseNickname {
+        background-color: #ebe8e4;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+        &> form {
+            align-self: center;
+            justify-self: center;
+            display: grid;
+            grid-template-rows: 50% 50%;
+            &> input {  
+            }
+    
+            &> button {
+                margin-top: 2vw;
+                justify-self: center;
+                width: 50%;
+            }
+        }
+        
     }
 }
+
