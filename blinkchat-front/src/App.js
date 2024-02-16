@@ -94,6 +94,8 @@ function App() {
         let dest = args[1];
         let privMessage = message.slice(args[1].length + 6);
         socket.emit("private message", nickname, dest, privMessage);
+      } else if (message.startsWith("/rename") && args.length === 3) {
+        socket.emit("rename channel", args[1], args[2]);
       } else {
         toast("Cette commande n'existe pas", 19);
       }
@@ -250,6 +252,9 @@ function App() {
     socket.on("joined rooms", onJoinedRoom);
     socket.on("display messages", onMessages);
     socket.on("reset", onReset);
+    socket.on("success", () => {
+      toast.success("rename reussis");
+    });
     // socket.on("update messages", onUpdateMessages);
     return () => {
       socket.off("nickname ok", onChangeNameOk);
