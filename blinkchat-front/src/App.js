@@ -25,8 +25,6 @@ function App() {
   const [rooms, setRooms] = useState([""]);
   const [newMessageCount, setNewMessageCount] = useState([]);
 
-  // affiche un message d'erreur sur la page principale
-  // definit quel composant occupe l'espace central
   const [activeTab, setActiveTab] = useState(null);
 
   function graphicalJoinRoom(room) {
@@ -46,11 +44,14 @@ function App() {
   }
 
   function chooseName(name) {
-    socket.emit("choose name", name.trim());
+    if (name.split(" ").length === 1) {
+      socket.emit("choose name", name.trim());
+    } else {
+      toast.error("No space allow");
+    }
   }
 
   function changeName(nickname) {
-    console.log("demande de changement de nickn,ame");
     socket.emit("change name", nickname);
   }
 
