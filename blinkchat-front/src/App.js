@@ -134,6 +134,10 @@ function App() {
     }
     function onChangeNameOk(name) {
       setNickname(name);
+      setActiveTab("commands");
+      setActiveRoom(null);
+      setJoinedRooms([]);
+      setNewMessageCount([]);
       toast.success("Tu t'appelles desormais " + name, { toastId: 13 });
     }
     function onChangeNameNotOk() {
