@@ -28,7 +28,7 @@ export default function Message({ publishMessage, activeRoom }) {
         // onChange={handleChange}
       />
       <button type="submit">
-        Envoyer
+        Send
       </button>
     </form>
     // {}
