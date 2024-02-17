@@ -30,7 +30,7 @@ export default function Aside({
             </li>
           ))
         ) : (
-          <p>Pas de salon</p>
+          <p>No room</p>
         )}
       </ul>
     </aside>

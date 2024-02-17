@@ -1,7 +1,7 @@
 export default function CommandsList() {
   return (
     <div id="commandsList">
-      <div>Liste des commandes</div>
+      <div>Commands list</div>
       <ul>  
         <li>/nick nickname: define the nickname of the user on the serve</li>
         <li>

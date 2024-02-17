@@ -13,7 +13,7 @@ export default function ChooseNicknameForm({isConnected,errorNickname,chooseName
             chooseName(e.target[0].value);
           }}
         >
-          <input placeholder="choose a nickname"></input>
+          <input placeholder="Choose a nickname"></input>
           <button type="submit">Valider</button>
         </form>
       </div>

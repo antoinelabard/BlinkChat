@@ -25,12 +25,12 @@ export default function UsersList({ users, activeRoom }) {
 
   return (
     <div id="userList">
-      <div>Liste des Users du salon {activeRoom}</div>
+      <div>Users in room : {activeRoom}</div>
       <ul>
         {users.length ? (
           users.map((elem) => <li key={elem}><div>{elem}</div><img src={userList[randomIcon()]}></img></li>)
         ) : (
-          <li>Aucun utilisateur</li>
+          <li>No user</li>
         )}
       </ul>
     </div>

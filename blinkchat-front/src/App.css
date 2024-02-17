@@ -76,10 +76,40 @@ table {
   display: grid;
   grid-template-rows: 50% 50%;
 }
+#form-container > #chooseNickname > form > input {
+  border: 3px solid #000;
+  border-radius: 5px;
+  height: 50px;
+  line-height: normal;
+  color: #282828;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  user-select: auto;
+  font-size: 16px;
+  padding: 0 6px;
+  padding-left: 12px;
+}
+#form-container > #chooseNickname > form > input :focus {
+  border: 3px solid #5551ff;
+}
 #form-container > #chooseNickname > form > button {
-  margin-top: 2vw;
-  justify-self: center;
-  width: 50%;
+  display: inline-block;
+  outline: none;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 3px;
+  padding: 12px 24px;
+  margin-top: 1vw;
+  border: 0;
+  color: #fff;
+  background: #000a47;
+  line-height: 1.15;
+  font-size: 16px;
+}
+#form-container > #chooseNickname > form > button :hover {
+  transition: all 0.1s ease;
+  box-shadow: 0 0 0 0 #fff, 0 0 0 3px #1de9b6;
 }
 
 #mainPage {
@@ -216,28 +246,64 @@ table {
 
 #conversationList {
   overflow: scroll;
-}
-#conversationList > h1 {
-  background: #ebe8e4;
+  padding-top: 1vh;
 }
 #conversationList > ul > li {
-  border-bottom: 2px solid black;
   display: grid;
-  grid-template-columns: 20% 80%;
+  grid-template-columns: 8% 12% 80%;
+  margin-bottom: 2vh;
+}
+#conversationList > ul > li > figure {
+  display: grid;
+  width: 85%;
+  justify-self: right;
+  align-items: center;
+}
+#conversationList > ul > li > figure > img {
+  width: 60%;
+  justify-self: center;
 }
 #conversationList > ul > li > #info {
-  padding-top: 10px;
-  padding-left: 10px;
+  max-width: 80%;
+  border-radius: 15px;
+  background-color: #026773;
+  display: grid;
+  justify-self: left;
+  align-self: center;
+  padding: 0.7rem;
+}
+#conversationList > ul > li > #info > span:first-child {
+  padding-top: 5%;
+  color: #F2E3D5;
+  font-size: 1.4em;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #conversationList > ul > li > #info > span:nth-child(2) {
-  color: #5461ee;
+  color: #012E40;
+  font-weight: bold;
 }
 #conversationList > ul > li > #message {
-  padding: 30px;
-  padding-top: 10px;
-  border-left: 2px solid black;
-  text-align: justify;
+  max-width: 95%;
+  border-radius: 15px;
+  background-color: #3CA6A6;
+  padding: 0.7rem;
+  padding-right: 1vw;
+  display: grid;
+  justify-self: left;
+  align-self: center;
+  font-size: 1.8em;
+  color: #F2E3D5;
+}
+#conversationList > ul > li > #message > p {
   overflow-wrap: break-word;
+}
+#conversationList > ul > div > p {
+  text-align: center;
+  padding-top: 10vh;
+  font-size: 24px;
+  font-weight: 600;
+  color: #443F3E;
 }
 
 #roomList {
@@ -266,21 +332,32 @@ table {
   border-radius: 15px;
   background: #A3ADBF;
   overflow: hidden;
-  text-overflow: ellipsis;
   padding: 2vh;
   font-size: 20px;
   display: grid;
   grid-template-columns: 90% 10%;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+  transition: background 0.3s ease;
 }
 #roomList > ul > li > div:first-child {
+  height: 100%;
+  width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: flex;
+}
+#roomList > ul > li > div:first-child > p {
+  width: 100%;
+  text-align: center;
   align-self: center;
 }
 #roomList > ul > li > div:nth-child(2) {
   justify-self: center;
 }
+#roomList > ul > li:hover {
+  background: #443F3E;
+}
+
 #userList {
   overflow: auto;
 }
@@ -297,7 +374,7 @@ table {
   grid-template-columns: repeat(5, 1fr);
 }
 #userList > ul > li {
-  width: 80%;
+  width: 60%;
   text-align: center;
   margin: 0 auto;
   margin-top: 2vh;
@@ -310,6 +387,18 @@ table {
   font-size: 20px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
 }
+#userList > ul > li > div {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#userList > ul > li > img {
+  width: 80%;
+  height: auto;
+  align-self: center;
+  justify-self: center;
+}
+
 #commandsList > div {
   font-size: 30px;
   text-align: center;

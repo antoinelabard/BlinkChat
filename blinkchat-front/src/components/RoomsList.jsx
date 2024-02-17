@@ -6,12 +6,12 @@ export default function RoomsList({ rooms, graphicalJoinRoom, graphicalDeleteRoo
 
   return (
     <div id="roomList">
-      <div>Liste des salons</div>
+      <div>Rooms list</div>
       <ul>
         {rooms.length ? (
-          rooms.map((elem) => <li key={elem.name} ><div onClick={() => graphicalJoinRoom(elem.name)} >{elem.name}</div> <figure onClick={() => graphicalDeleteRoom(elem.name)}><img src={deleteIcon}></img></figure> </li>)
+          rooms.map((elem) => <li key={elem.name} ><div onClick={() => graphicalJoinRoom(elem.name)} ><p>{elem.name}</p></div> <figure onClick={() => graphicalDeleteRoom(elem.name)}><img src={deleteIcon}></img></figure> </li>)
         ) : (
-          <li>Pas de salon</li>
+          <li>No room created</li>
         )}
       </ul>
     </div>

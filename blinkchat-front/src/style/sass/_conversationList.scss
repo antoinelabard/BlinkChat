@@ -1,26 +1,72 @@
 #conversationList {
     overflow: scroll;
-    &>h1 {
-        background: #ebe8e4;
-    }
+    padding-top: 1vh;
     &>ul {
         &>li {
-            border-bottom: 2px solid black;
             display: grid;
-            grid-template-columns: 20% 80%;
-            &>#info {
-                padding-top: 10px;
-                padding-left: 10px;
-                & > span:nth-child(2) {
-                    color: #5461ee;
+            grid-template-columns: 8% 12% 80%;
+            margin-bottom: 2vh;
+            &>figure {
+                display: grid;
+                width: 85%;
+                justify-self: right;
+                align-items: center;
+                &>img {
+                    width: 60%;
+                    justify-self: center;
                 }
             }
+            
+            &>#info {
+                max-width: 80%;
+                border-radius: 15px;
+                background-color: #026773;
+                display: grid;
+                justify-self:left;
+                align-self: center;
+                padding: 0.7rem;
+
+                &> span:first-child {
+                    padding-top: 5%;
+                    color: #F2E3D5;
+                    font-size: 1.4em;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                & > span:nth-child(2) {
+                    color: #012E40;
+                    font-weight: bold;
+                }
+            }
+            
             &>#message {
-                padding: 30px;
-                padding-top: 10px;
-                border-left: 2px solid black;
-                text-align: justify;
-                overflow-wrap: break-word;
+                max-width: 95%;
+                border-radius: 15px;
+                background-color: #3CA6A6;
+                padding: 0.7rem;
+                padding-right: 1vw;
+                display: grid;
+                justify-self:left;
+                align-self: center;
+                font-size: 1.8em;
+                color: #F2E3D5;
+                &> p {
+                    overflow-wrap: break-word;
+                }
+            }
+            &>div {
+
+            }
+            
+        }
+
+        &>div {
+            &>p {
+                text-align: center;
+                padding-top: 10vh;
+                font-size: 24px;
+                font-weight: 600;
+                color: #443F3E;
             }
         }
     }
