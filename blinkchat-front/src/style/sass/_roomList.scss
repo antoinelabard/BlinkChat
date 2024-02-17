@@ -31,10 +31,17 @@
             transition: background 0.3s ease;
 
             &> div:first-child {
+                height: 100%;
+                width: 100%;
                 overflow: hidden;
                 text-overflow: ellipsis;
-                align-self: center;
-                justify-self: center;
+                display: flex;
+                
+                &>p {
+                    width: 100%;
+                    text-align: center;
+                    align-self: center;
+                }
             }
 
             &> div:nth-child(2) {
