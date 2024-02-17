@@ -3,7 +3,7 @@ export default function CommandsList() {
     <div id="commandsList">
       <div>Commands list</div>
       <ul>  
-        <li>/nick nickname: define the nickname of the user on the serve</li>
+        <li>/nick nickname: define the nickname of the user on the server</li>
         <li>
           /list [string]: list the available channels from the server. If string
           is specified, only displays those whose name contains the string.
