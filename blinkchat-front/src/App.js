@@ -46,7 +46,7 @@ function App() {
   }
 
   function chooseName(name) {
-    socket.emit("choose name", name);
+    socket.emit("choose name", name.trim());
   }
 
   function changeName(nickname) {
@@ -64,7 +64,7 @@ function App() {
     if (message[0] === "/") {
       // fait
       if (message.startsWith("/nick") && args.length === 2) {
-        changeName(args[1]);
+        changeName(args[1].trim());
         // fait (a gerer comment on passe de liste de room a l'affichage de message (03/02))
       } else if (message === "/list") {
         getRooms();
@@ -90,6 +90,12 @@ function App() {
       } else if (message === "/users" && activeRoom) {
         console.log("give me all users");
         socket.emit("give me all users", activeRoom);
+      } else if (args[0] === "/msg") {
+        let dest = args[1];
+        let privMessage = message.slice(args[1].length + 6);
+        socket.emit("private message", nickname, dest, privMessage);
+      } else if (message.startsWith("/rename") && args.length === 3) {
+        socket.emit("rename channel", args[1], args[2]);
       } else {
         toast("Cette commande n'existe pas", 19);
       }
@@ -220,6 +226,19 @@ function App() {
       setActiveTab(null);
       setActiveRoom(null);
     }
+    function onPrivateMessage(data, sender) {
+      toast(sender + ": " + data, {
+        position: "top-left",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        toastId: data,
+      });
+    }
     socket.on("nickname ok", onChangeNameOk);
     socket.on("nickname not allow", onChangeNameNotOk);
     socket.on("choose another nickname", onChooseNameNotOk);
@@ -228,10 +247,14 @@ function App() {
     socket.on("rooms", onGetRooms);
     socket.on("error", OnError);
     socket.on("users", onUsers);
+    socket.on("private message", onPrivateMessage);
     socket.on("pop up", onPopUp);
     socket.on("joined rooms", onJoinedRoom);
     socket.on("display messages", onMessages);
     socket.on("reset", onReset);
+    socket.on("success", () => {
+      toast.success("rename reussis");
+    });
     // socket.on("update messages", onUpdateMessages);
     return () => {
       socket.off("nickname ok", onChangeNameOk);
@@ -252,28 +275,28 @@ function App() {
 
   return (
     <>
-    <ToastContainer />
+      <ToastContainer />
       {nickname ? (
         <>
           <div id="mainDiv">
-          <Header activeRoom={activeRoom} userName={nickname} />
-          <section>
-            <Aside
-              joinedRooms={joinedRooms}
-              getMessagesByRoom={getMessagesByRoom}
-              newMessageCount={newMessageCount}
-              graphicalQuitRoom= {graphicalQuitRoom}
-            />
-            <Main
-              publishMessage={publishMessage}
-              rooms={rooms}
-              activeTab={activeTab}
-              messages={messages}
-              users={users}
-              activeRoom={activeRoom}
-              graphicalJoinRoom = {graphicalJoinRoom}
-              graphicalDeleteRoom = {graphicalDeleteRoom}
-            />
+            <Header activeRoom={activeRoom} userName={nickname} />
+            <section>
+              <Aside
+                joinedRooms={joinedRooms}
+                getMessagesByRoom={getMessagesByRoom}
+                newMessageCount={newMessageCount}
+                graphicalQuitRoom={graphicalQuitRoom}
+              />
+              <Main
+                publishMessage={publishMessage}
+                rooms={rooms}
+                activeTab={activeTab}
+                messages={messages}
+                users={users}
+                activeRoom={activeRoom}
+                graphicalJoinRoom={graphicalJoinRoom}
+                graphicalDeleteRoom={graphicalDeleteRoom}
+              />
             </section>
           </div>
         </>
