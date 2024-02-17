@@ -95,14 +95,13 @@ function App() {
             toast.error("Max Size 30 characters");
           }
         } else if (args.length === 1) {
-          toast("Indiquer un nom de room après /create", 16);
+          toast("Indicate a room name after /create", 16);
         } else {
-          toast("Un seul mot après /create", 16);
+          toast("One word after /create", 16);
         }
       } else if (message === "/commands") {
         setActiveTab("commands");
       } else if (message.startsWith("/delete") && args.length === 2) {
-        console.log("socket de delete envoyé");
         socket.emit("delete room", args[1]);
       } else if (message.startsWith("/join") && args.length === 2) {
         socket.emit("join room", args[1], nickname);
@@ -120,7 +119,7 @@ function App() {
       } else if (message.startsWith("/rename") && args.length === 3) {
         socket.emit("rename channel", args[1], args[2]);
       } else {
-        toast("Cette commande n'existe pas", 19);
+        toast("This command does not exist", 19);
       }
 
       // console.log("provide a nickname");
@@ -155,16 +154,16 @@ function App() {
       setActiveRoom(null);
       setJoinedRooms([]);
       setNewMessageCount([]);
-      toast.success("Tu t'appelles desormais " + name, { toastId: 13 });
+      toast.success("Your name is now " + name, { toastId: 13 });
     }
     function onChangeNameNotOk() {
-      toast.error("Ce pseudo ne convient pas", { toastId: 14 });
+      toast.error("This nickname is not suitable ", { toastId: 14 });
     }
     function onChooseNameNotOk() {
-      toast.error("Ce pseudo ne convient pas", { toastId: 15 });
+      toast.error("This nickname is not suitable ", { toastId: 15 });
     }
     function OnError() {
-      toast.error("Cette commande n'existe pas", { toastId: 16 });
+      toast.error("This command does not exist ", { toastId: 16 });
     }
     function onMessages(messages, roomName, bool) {
       if (
@@ -192,7 +191,6 @@ function App() {
         setMessages(messages);
         setActiveTab("messages");
       } else if (bool === "update" && activeRoom !== roomName) {
-        console.log("un nouveau message en attente a stocké");
         const updatedNewMessageCount = [...newMessageCount];
 
         for (let i = 0; i < joinedRooms.length; i++) {
@@ -217,8 +215,7 @@ function App() {
         setNewMessageCount(truc);
         // console.log(truc);
       } else if (type === "delete") {
-        console.log("une roome en moisn qui s'appel: " + roomName);
-        toast("une room supprimée", { toastId: "532" });
+        toast("A room deleted", { toastId: "532" });
         console.log(channels);
         if (channels.length === 0) {
           setNewMessageCount([]);
@@ -226,9 +223,6 @@ function App() {
           for (let i = 0; i < joinedRooms.length; i++) {
             if (joinedRooms[i].name === roomName) {
               let truc = [...newMessageCount];
-              console.log(truc.splice(i, 1));
-
-              console.log(truc);
               setNewMessageCount(truc);
             }
           }
@@ -237,7 +231,6 @@ function App() {
         let truc = newMessageCount;
         truc.push(0);
         setNewMessageCount(truc);
-        console.log("une roome en plus qui s'appel: " + roomName);
       }
       setJoinedRooms(channels);
       console.log(newMessageCount);
@@ -246,7 +239,7 @@ function App() {
       if (user !== nickname) {
         toast(message, { toastId: message });
       } else {
-        toast("Vous avez rejoint le salon " + roomName, { toastId: message });
+        toast("You have joined the room " + roomName, { toastId: message });
       }
     }
     function onReset() {
