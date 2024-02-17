@@ -167,6 +167,20 @@ io.on("connection", (socket) => {
       socket.emit("rooms", truc);
     });
   });
+
+  socket.on("get rooms by name", (name) => {
+    let tab = [];
+
+    let channels = repository.getChannels().then((channels) => {
+      for (let i = 0; i < channels.length; i++) {
+        if (channels[i].name.includes(name)) {
+          tab.push(channels[i]);
+        }
+      }
+      // });
+      socket.emit("rooms", tab);
+    });
+  });
   // socket.on("rename channel", (oldName, newName) => {
   //   // socket.emit("Lien vers la version premnium");
 

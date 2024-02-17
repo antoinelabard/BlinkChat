@@ -57,15 +57,21 @@ function App() {
   function getRooms() {
     socket.emit("get all rooms");
   }
+  function getRoomsByName(name) {
+    socket.emit("get rooms by name", name);
+  }
 
   function publishMessage(message, activeRoom) {
     let args = message.split(" ");
-
+    console.log(message);
+    console.log(args);
     if (message[0] === "/") {
       // fait
       if (message.startsWith("/nick") && args.length === 2) {
         changeName(args[1].trim());
         // fait (a gerer comment on passe de liste de room a l'affichage de message (03/02))
+      } else if (message.startsWith("/list") && args.length === 2) {
+        getRoomsByName(args[1]);
       } else if (message === "/list") {
         getRooms();
       } else if (message.startsWith("/create")) {
