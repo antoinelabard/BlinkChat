@@ -29,6 +29,8 @@
             
             &> div {
                 font-weight:600;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
             &> img {
                 width: 80%;

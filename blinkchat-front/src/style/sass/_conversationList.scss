@@ -16,10 +16,9 @@
                 }
             }
             &>#info {
-                
                 max-width: 80%;
                 border-radius: 15px;
-                background-color: #443F3E;
+                background-color: #026773;
                 display: grid;
                 justify-self:left;
                 align-self: center;
@@ -29,19 +28,20 @@
                 }
                 &> span:first-child {
                     padding-top: 5%;
-                    color: white;
+                    color: #F2E3D5;
                     font-size: 1.4em;
                     overflow: hidden;
                     text-overflow: ellipsis;
                 }
                 & > span:nth-child(2) {
-                    color: #5461ee;
+                    color: #012E40;
+                    font-weight: bold;
                 }
             }
             &>#message {
                 max-width: 95%;
                 border-radius: 15px;
-                background-color: #443F3E;
+                background-color: #3CA6A6;
                 padding: 0.7rem;
                 display: grid;
                 justify-self:left;
@@ -49,6 +49,7 @@
                 padding-right: 1vw;
                 font-size: 1.8em;
                 overflow-wrap:break-word;
+                color: #F2E3D5;
             }
             &>div {
 

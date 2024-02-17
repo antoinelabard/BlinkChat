@@ -235,7 +235,7 @@ table {
 #conversationList > ul > li > #info {
   max-width: 80%;
   border-radius: 15px;
-  background-color: #443F3E;
+  background-color: #026773;
   display: grid;
   justify-self: left;
   align-self: center;
@@ -243,18 +243,19 @@ table {
 }
 #conversationList > ul > li > #info > span:first-child {
   padding-top: 5%;
-  color: white;
+  color: #F2E3D5;
   font-size: 1.4em;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 #conversationList > ul > li > #info > span:nth-child(2) {
-  color: #5461ee;
+  color: #012E40;
+  font-weight: bold;
 }
 #conversationList > ul > li > #message {
   max-width: 95%;
   border-radius: 15px;
-  background-color: #443F3E;
+  background-color: #3CA6A6;
   padding: 0.7rem;
   display: grid;
   justify-self: left;
@@ -262,6 +263,7 @@ table {
   padding-right: 1vw;
   font-size: 1.8em;
   overflow-wrap: break-word;
+  color: #F2E3D5;
 }
 #conversationList > ul > div > p {
   text-align: center;
@@ -348,6 +350,8 @@ table {
 }
 #userList > ul > li > div {
   font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #userList > ul > li > img {
   width: 80%;
