@@ -32,15 +32,10 @@ app.get("/", (req, res) => {
 });
 
 function emitMessagesToAllUSers(messagesTab, roomName) {
-  // console.log(message + activeRoom + nickname);
   repository.getChannelByName(roomName).then((channel) => {
     for (let i = 0; i < socketsList.length; i++) {
       for (let j = 0; j < channel.users.length; j++) {
         if (socketsList[i].name === channel.users[j]) {
-          console.log(socketsList.length + " personnes connectées");
-          console.log("message envoyé a " + socketsList[i].name);
-          console.log(roomName);
-
           let bool = "update";
           socketsList[i].socket.emit(
             "display messages",
@@ -48,23 +43,16 @@ function emitMessagesToAllUSers(messagesTab, roomName) {
             roomName,
             bool
           );
-          // socket.emit("display messages", res, roomName, "get");
         }
       }
     }
   });
 }
 function emitPopUpToAllUSersOfTheRoom(roomName, senderNickname, message) {
-  // console.log(message + activeRoom + nickname);
-  // console.log(message);
   repository.getChannelByName(roomName).then((channel) => {
     for (let i = 0; i < socketsList.length; i++) {
       for (let j = 0; j < channel.users.length; j++) {
-        // console.log(socketsList[i].name + " " + channel.users[j]);
-        // console.log(socketsList[i].name === channel.users[j]);
         if (socketsList[i].name === channel.users[j]) {
-          // console.log("pop up envoyé a " + socketsList[i].name);
-
           socketsList[i].socket.emit(
             "pop up",
             roomName,
@@ -79,10 +67,6 @@ function emitPopUpToAllUSersOfTheRoom(roomName, senderNickname, message) {
 let repository = new Repository();
 
 io.on("connection", (socket) => {
-  // repository.addMessage("moi", "coucou les gars", "&").then((res) => {
-  //   console.log(res);
-  // });cr
-  console.log("+1");
   socket.emit("connected");
 
   socket.on("give me all users", (roomName) => {
@@ -95,18 +79,10 @@ io.on("connection", (socket) => {
     });
   });
   socket.on("private message", (nickname, dest, privMessage) => {
-    console.log("message de " + nickname);
-    console.log("message to : " + dest);
-
     for (let i = 0; i < socketsList.length; i++) {
       if (socketsList[i].name === dest) {
-        // // console.log(socketsList.length + " personnes connectées");
-        console.log("message envoyé a " + socketsList[i].name);
-        console.log(privMessage);
-        // console.log(roomName);
         socket.emit("private message", dest, "message envoyé a ");
         socketsList[i].socket.emit("private message", privMessage, nickname);
-        // socket.emit("display messages", res, roomName, "get");
       }
     }
   });
@@ -114,7 +90,6 @@ io.on("connection", (socket) => {
     let truc = repository
       .removeUserFromChannel(roomName, nickname)
       .then((truc) => {
-        // console.log(truc);
         if (truc.commandResult === "success") {
           let joinedRooms = repository
             .getUserSubscribedChannels(nickname)
@@ -122,7 +97,6 @@ io.on("connection", (socket) => {
               if (joinedRooms.commandResult === "error") {
                 socket.emit("error");
               } else {
-                console.log(joinedRooms);
                 socket.emit("joined rooms", joinedRooms, "delete", roomName);
                 socket.emit("reset");
                 emitPopUpToAllUSersOfTheRoom(
@@ -138,9 +112,7 @@ io.on("connection", (socket) => {
       });
   });
   socket.on("join room", (roomName, nickname) => {
-    // console.log("Je suis " + nickname + " et je veux rejoindre: " + roomName);
     let truc = repository.addUserToChannel(roomName, nickname).then((truc) => {
-      // console.log(truc);
       if (truc.commandResult === "success") {
         let joinedRooms = repository
           .getUserSubscribedChannels(nickname)
@@ -177,71 +149,47 @@ io.on("connection", (socket) => {
           tab.push(channels[i]);
         }
       }
-      // });
+
       socket.emit("rooms", tab);
     });
   });
-  // socket.on("rename channel", (oldName, newName) => {
-  //   // socket.emit("Lien vers la version premnium");
 
-  //   repository.renameChannel(oldName, newName).then((res) => {
-  //     console.log(res);
-  //     if (res.commandResult === "success") {
-  //     } else {
-  //       socket.emit("success");
-  //     }
-  //   });
-  // });
   socket.on("change name", (name) => {
-    // console.log(socket);
     repository.login(name).then((truc) => {
-      // console.log(truc.commandResult);
       if (truc.commandResult === "success") {
         socket.emit("nickname ok", name);
 
         for (let i = 0; i < socketsList.length; i++) {
           if (socketsList[i].socket === socket) {
             socketsList[i].name = name;
-            // console.log(socketsList);
           }
         }
       } else {
         socket.emit("nickname not allow");
       }
-
-      // socket.emit("rooms", truc);
     });
   });
   socket.on("choose name", (name) => {
     repository.login(name).then((truc) => {
-      // console.log(truc.commandResult);
       if (truc.commandResult === "success") {
         socket.emit("nickname ok", name);
         socketsList.push({ name: name, socket: socket });
-        console.log(socketsList.length + "personnes connecté");
-        // console.log(socketsList);
-
         let joinedRooms = repository
           .getUserSubscribedChannels(name)
           .then((joinedRooms) => {
             if (joinedRooms.commandResult === "error") {
               socket.emit("error");
             } else {
-              console.log(joinedRooms);
               socket.emit("joined rooms", joinedRooms, "add", joinedRooms.name);
             }
           });
       } else {
         socket.emit("choose another nickname");
       }
-
-      // socket.emit("rooms", truc);
     });
   });
 
   socket.on("create room", (roomName, author) => {
-    // console.log("Je suis " + author);
-    // console.log("demande de creation de " + roomName);
     let truc = repository.addChannel(roomName, author).then((truc) => {
       if (truc.commandResult === "success") {
         let truc = repository.getChannels().then((truc) => {
@@ -252,7 +200,6 @@ io.on("connection", (socket) => {
               if (joinedRooms.commandResult === "error") {
                 socket.emit("error");
               } else {
-                // console.log(joinedRooms);
                 socket.emit("joined rooms", joinedRooms, "add", roomName);
               }
             });
@@ -261,15 +208,6 @@ io.on("connection", (socket) => {
         socket.emit("error");
       }
     });
-    // repository.addChannel(roomName, author);
-
-    // setTimeout(() => {
-    //   let channels = repository.getChannels().then((channels) => {
-    //     socket.emit("rooms", channels);
-    //   });
-    // }, 1000);
-
-    // gerer lidentité avec des cookies ?
   });
   socket.on("delete room", (roomName) => {
     let users;
@@ -289,20 +227,13 @@ io.on("connection", (socket) => {
 
               for (let i = 0; i < socketsList.length; i++) {
                 for (let j = 0; j < users.length; j++) {
-                  // /pour chaque personne du salon on recup la socket associée
-                  // console.log(socketsList[i].name);
-                  // console.log(channel.users[j]);
                   if (socketsList[i].name === users[j]) {
-                    console.log(socketsList.length + " personnes connectées");
-                    console.log("message envoyé a " + socketsList[i].name);
-
                     repository
                       .getUserSubscribedChannels(users[j])
                       .then((joinedRooms) => {
                         if (joinedRooms.commandResult === "error") {
                           socket.emit("error");
                         } else {
-                          console.log(joinedRooms);
                           socketsList[i].socket.emit(
                             "joined rooms",
                             joinedRooms,
@@ -327,27 +258,19 @@ io.on("connection", (socket) => {
   });
 
   socket.on("get messages", (roomName) => {
-    console.log("je veux les messages de la room " + roomName);
     let truc = repository.getMessagesByChannel(roomName).then((res) => {
-      // console.log(res + "zefezfz");
       if (res.commandResult === "error") {
         socket.emit("error");
       } else {
-        // console.log(room);
-        console.log(typeof roomName);
-        console.log("get: " + roomName);
         socket.emit("display messages", res, roomName, "get");
       }
     });
   });
   socket.on("publish message", (message, activeRoom, nickname) => {
-    // console.log(activeRoom, nickname);
-    console.log(activeRoom + " " + nickname);
     let truc = repository
       .addMessage(nickname, message, activeRoom)
       .then((truc) => {
         repository.getMessagesByChannel(activeRoom).then((res) => {
-          // console.log(res);
           if (res.commandResult === "error") {
             socket.emit("error");
           } else {
@@ -355,7 +278,6 @@ io.on("connection", (socket) => {
           }
         });
       });
-    // console.log("publishing message: " + message);
   });
   socket.on("delete message", (message) => {
     console.log("deleting message: " + message);
@@ -368,7 +290,6 @@ io.on("connection", (socket) => {
       if (socket === socketsList[i].socket) {
         username = socketsList[i].name;
         socketsList.splice(i, 1);
-        console.log(socketsList.length + " conncété");
       }
     }
     let joinedRooms = repository
@@ -377,25 +298,13 @@ io.on("connection", (socket) => {
         if (joinedRooms.commandResult === "error") {
           socket.emit("error");
         } else {
-          // console.log(joinedRooms);
           for (let index = 0; index < joinedRooms.length; index++) {
             let truc = repository
               .removeUserFromChannel(joinedRooms[index].name, username)
-              .then((truc) => {
-                // console.log(truc);
-              });
+              .then((truc) => {});
           }
         }
       });
-    repository.logout(username).then((res) => {
-      console.log("logout");
-      console.log(res);
-    });
-    console.log(socketsList.length);
-    console.log("user disconnected");
+    repository.logout(username).then((res) => {});
   });
 });
-
-//liste des choses a faire
-
-// ondeconect : send pop up to all users from all salons where users has joined
