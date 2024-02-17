@@ -14,7 +14,7 @@
         grid-template-columns: repeat(5, 1fr);
         
         &> li {
-            width: 80%;
+            width: 60%;
             text-align: center;
             margin: 0 auto;
             margin-top: 2vh;
@@ -26,8 +26,15 @@
             padding: 2vh;
             font-size: 20px;
             box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
-            &> p {
-                
+            
+            &> div {
+                font-weight:600;
+            }
+            &> img {
+                width: 80%;
+                height: auto;
+                align-self: center;
+                justify-self: center;
             }
         }
     }

@@ -23,17 +23,18 @@
             border-radius: 15px;
             background: #A3ADBF;
             overflow: hidden;
-            text-overflow: ellipsis;
             padding: 2vh;
             font-size: 20px;
             display: grid;
             grid-template-columns: 90% 10%;
             box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
-        
+            transition: background 0.3s ease;
+
             &> div:first-child {
                 overflow: hidden;
                 text-overflow: ellipsis;
                 align-self: center;
+                justify-self: center;
             }
 
             &> div:nth-child(2) {
@@ -41,7 +42,7 @@
             }
 
             &:hover {
-
+                background: #443F3E; 
             }
         }
     }
