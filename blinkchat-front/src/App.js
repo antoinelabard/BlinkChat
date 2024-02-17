@@ -77,7 +77,11 @@ function App() {
         getRooms();
       } else if (message.startsWith("/create")) {
         if (args.length === 2) {
-          socket.emit("create room", args[1], nickname);
+          if (args[1].length < 30) {
+            socket.emit("create room", args[1], nickname);
+          } else {
+            toast.error("Max Size 30 characters");
+          }
         } else if (args.length === 1) {
           toast("Indiquer un nom de room après /create", 16);
         } else {
