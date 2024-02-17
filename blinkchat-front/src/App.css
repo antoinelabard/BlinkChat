@@ -297,6 +297,7 @@ table {
 }
 #conversationList > ul > li > #message > p {
   overflow-wrap: break-word;
+  word-break: break-all;
 }
 #conversationList > ul > div > p {
   text-align: center;

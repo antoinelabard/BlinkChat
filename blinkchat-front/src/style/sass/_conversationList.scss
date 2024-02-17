@@ -50,13 +50,15 @@
                 align-self: center;
                 font-size: 1.8em;
                 color: #F2E3D5;
+                
                 &> p {
                     overflow-wrap: break-word;
+                    word-break: break-all;
                 }
+            
+            
             }
-            &>div {
-
-            }
+            
             
         }
 
