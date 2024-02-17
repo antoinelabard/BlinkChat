@@ -246,7 +246,7 @@ function App() {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "light",
+        theme: "light", { toastId: data }
       });
     }
     socket.on("nickname ok", onChangeNameOk);
