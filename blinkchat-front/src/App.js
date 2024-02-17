@@ -240,6 +240,7 @@ function App() {
     function onPrivateMessage(data, sender) {
       toast(sender + ": " + data, {
         position: "top-left",
+        autoClose: 500000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
