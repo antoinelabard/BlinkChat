@@ -240,13 +240,13 @@ function App() {
     function onPrivateMessage(data, sender) {
       toast(sender + ": " + data, {
         position: "top-left",
-        autoClose: 50000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "light", { toastId: data }
+        theme: "light",
+        toastId: data,
       });
     }
     socket.on("nickname ok", onChangeNameOk);
@@ -265,7 +265,7 @@ function App() {
     socket.on("success", () => {
       toast.success("rename reussis");
     });
-
+    // socket.on("update messages", onUpdateMessages);
     return () => {
       socket.off("nickname ok", onChangeNameOk);
       socket.off("nickname not allow", onChangeNameNotOk);
@@ -279,6 +279,8 @@ function App() {
       socket.off("joined rooms", onJoinedRoom);
       socket.off("display messages", onMessages);
     };
+
+    // socket.on("joined rooms", (value) => onJoinRoom(value));
   }, [messages, activeRoom, joinedRooms, nickname, newMessageCount]);
 
   return (
