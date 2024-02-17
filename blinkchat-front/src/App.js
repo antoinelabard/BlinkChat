@@ -240,9 +240,7 @@ function App() {
     function onPrivateMessage(data, sender) {
       toast(sender + ": " + data, {
         position: "top-left",
-        hideProgressBar: false,
         closeOnClick: true,
-        pauseOnHover: true,
         draggable: true,
         theme: "light",
         toastId: data,
