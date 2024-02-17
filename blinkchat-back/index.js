@@ -102,7 +102,7 @@ io.on("connection", (socket) => {
                 emitPopUpToAllUSersOfTheRoom(
                   roomName,
                   nickname,
-                  `${nickname} a quitté le salon ${roomName}`
+                  `${nickname} leave room ${roomName}`
                 );
               }
             });
@@ -125,7 +125,7 @@ io.on("connection", (socket) => {
               emitPopUpToAllUSersOfTheRoom(
                 roomName,
                 nickname,
-                `${nickname} a rejoint le salon ${roomName}`
+                `${nickname} join room ${roomName}`
               );
             }
           });
