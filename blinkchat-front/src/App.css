@@ -217,27 +217,58 @@ table {
 #conversationList {
   overflow: scroll;
 }
-#conversationList > h1 {
-  background: #ebe8e4;
-}
 #conversationList > ul > li {
-  border-bottom: 2px solid black;
   display: grid;
-  grid-template-columns: 20% 80%;
+  grid-template-columns: 8% 9% 83%;
+  margin-bottom: 2vh;
+}
+#conversationList > ul > li > figure {
+  display: grid;
+  width: 80%;
+  justify-self: right;
+  align-items: center;
+}
+#conversationList > ul > li > figure > img {
+  width: 60%;
+  justify-self: center;
 }
 #conversationList > ul > li > #info {
-  padding-top: 10px;
-  padding-left: 10px;
+  max-width: 80%;
+  border-radius: 15px;
+  background-color: #443F3E;
+  display: grid;
+  justify-self: left;
+  align-self: center;
+  padding: 0.7rem;
+}
+#conversationList > ul > li > #info > span:first-child {
+  padding-top: 5%;
+  color: white;
+  font-size: 1.4em;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #conversationList > ul > li > #info > span:nth-child(2) {
   color: #5461ee;
 }
 #conversationList > ul > li > #message {
-  padding: 30px;
-  padding-top: 10px;
-  border-left: 2px solid black;
-  text-align: justify;
+  max-width: 95%;
+  border-radius: 15px;
+  background-color: #443F3E;
+  padding: 0.7rem;
+  display: grid;
+  justify-self: left;
+  align-self: center;
+  padding-right: 1vw;
+  font-size: 1.8em;
   overflow-wrap: break-word;
+}
+#conversationList > ul > div > p {
+  text-align: center;
+  padding-top: 10vh;
+  font-size: 24px;
+  font-weight: 600;
+  color: #443F3E;
 }
 
 #roomList {
