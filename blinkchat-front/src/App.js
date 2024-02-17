@@ -45,14 +45,26 @@ function App() {
 
   function chooseName(name) {
     if (name.split(" ").length === 1) {
-      socket.emit("choose name", name.trim());
+      if (name.length > 15) {
+        toast.error("Max 15 characters");
+      } else {
+        socket.emit("choose name", name.trim());
+      }
     } else {
       toast.error("No space allow");
     }
   }
 
   function changeName(nickname) {
-    socket.emit("change name", nickname);
+    if (nickname.split(" ").length === 1) {
+      if (nickname.length > 15) {
+        toast.error("Max 15 characters");
+      } else {
+        socket.emit("change name", nickname);
+      }
+    } else {
+      toast.error("No space allow");
+    }
   }
 
   function getRooms() {
